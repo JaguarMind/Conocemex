@@ -30,21 +30,43 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  
+  # HttpClient & API Management
+  dio: ^5.7.0
+  retrofit: ^4.9.2
+  
+  # Dependency Injection
+  get_it: ^7.6.0
+  
+  # State Management
+  provider: ^6.1.5+1
+  
+  # Serialization
+  equatable: ^2.0.0
+  json_annotation: ^4.9.0
+  
+  # Authentication
+  google_sign_in: ^6.2.0
+  local_auth: ^2.3.0
+  
+  # Storage
+  shared_preferences: ^2.3.2
+  
+  # Connectivity
+  connectivity_plus: ^6.1.0
+  
+  # Utilities
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  json_serializable: ^6.8.0
+  build_runner: ^2.4.0 
+  flutter_launcher_icons: ^0.13.1
+  
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -56,6 +78,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/icon/conocemex.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -87,3 +112,22 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/icon/conocemex.png
+  min_sdk_android: 21
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: assets/icon/conocemex.png
+    background_color: "#ffffff"
+    theme_color: "#5E35B1"
+  windows:
+    generate: true
+    image_path: assets/icon/conocemex.png
+    icon_size: 48
+  macos:
+    generate: true
+    image_path: assets/icon/conocemex.png
