@@ -53,10 +53,13 @@ class LoginViewModel extends ChangeNotifier {
       _error = null;
       notifyListeners();
     } on AppException catch (e) {
+      debugPrint('LoginViewModel.login AppException: ${e.runtimeType} - ${e.message}');
       _error = _toUserFriendlyMessage(e.message);
       notifyListeners();
       rethrow;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('LoginViewModel.login unexpected error: ${e.runtimeType} - $e');
+      debugPrint(stackTrace.toString());
       _error = _toUserFriendlyMessage(e.toString());
       notifyListeners();
       rethrow;
@@ -76,10 +79,13 @@ class LoginViewModel extends ChangeNotifier {
       _error = null;
       notifyListeners();
     } on AppException catch (e) {
+      debugPrint('LoginViewModel.googleLogin AppException: ${e.runtimeType} - ${e.message}');
       _error = _toUserFriendlyMessage(e.message);
       notifyListeners();
       rethrow;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('LoginViewModel.googleLogin unexpected error: ${e.runtimeType} - $e');
+      debugPrint(stackTrace.toString());
       _error = _toUserFriendlyMessage(e.toString());
       notifyListeners();
       rethrow;
@@ -108,10 +114,13 @@ class LoginViewModel extends ChangeNotifier {
         notifyListeners();
       }
     } on AppException catch (e) {
+      debugPrint('LoginViewModel.biometricLogin AppException: ${e.runtimeType} - ${e.message}');
       _error = _toUserFriendlyMessage(e.message);
       notifyListeners();
       rethrow;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('LoginViewModel.biometricLogin unexpected error: ${e.runtimeType} - $e');
+      debugPrint(stackTrace.toString());
       _error = _toUserFriendlyMessage(e.toString());
       notifyListeners();
       rethrow;
@@ -132,10 +141,13 @@ class LoginViewModel extends ChangeNotifier {
       _error = null;
       notifyListeners();
     } on AppException catch (e) {
+      debugPrint('LoginViewModel.logout AppException: ${e.runtimeType} - ${e.message}');
       _error = _toUserFriendlyMessage(e.message);
       notifyListeners();
       rethrow;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('LoginViewModel.logout unexpected error: ${e.runtimeType} - $e');
+      debugPrint(stackTrace.toString());
       _error = _toUserFriendlyMessage(e.toString());
       notifyListeners();
       rethrow;

@@ -1,0 +1,5 @@
+package com.jaguarmind.conocemex
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity()

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '/core/constants/app_constants.dart';
-import '/core/di/setup_dependencies.dart';
 import '/core/routes/app_routes.dart';
-import '/core/services/secure_storage_service.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -24,10 +23,9 @@ class _SplashPageState extends State<SplashPage> {
 
     if (!mounted) return;
 
-    final storageService = getIt<SecureStorageService>();
-    final token = storageService.getToken();
+    final session = Supabase.instance.client.auth.currentSession;
 
-    if (token != null) {
+    if (session != null) {
       AppRoutes.goToHome(context);
     } else {
       AppRoutes.goToLogin(context);

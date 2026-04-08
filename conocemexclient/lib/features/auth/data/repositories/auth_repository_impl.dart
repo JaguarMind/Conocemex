@@ -1,4 +1,7 @@
 import 'dart:convert';
+
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '/core/services/secure_storage_service.dart';
 import '/features/auth/domain/entities/auth_entity.dart';
 import '/features/auth/domain/entities/user_entity.dart';
@@ -9,9 +12,11 @@ import '../models/user_model.dart';
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
   final SecureStorageService storageService;
+  final SupabaseClient supabaseClient;
 
   AuthRepositoryImpl({
     required this.remoteDataSource,
+    required this.supabaseClient,
     required this.storageService,
   });
 
@@ -85,6 +90,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
     final response = await remoteDataSource.refreshToken(refreshToken);
 
+    if (response == null) {
+      return null;
+    }
+
     // Actualizar tokens
     await storageService.saveToken(response.accessToken);
     await storageService.saveRefreshToken(response.refreshToken);
@@ -98,17 +107,17 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Stream<AuthEntity?> get authStateStream async* {
-    final token = storageService.getToken();
-    final userJson = storageService.getUser();
-
-    if (token != null && userJson != null) {
-      final userMap = jsonDecode(userJson) as Map<String, dynamic>;
-      final userModel = UserModel.fromJson(userMap);
-      final refreshToken = storageService.getRefreshToken() ?? '';
-      yield _mapToEntity(token, refreshToken, userModel);
-    } else {
+    final session = supabaseClient.auth.currentSession;
+    if (session == null) {
       yield null;
+      return;
     }
+
+    yield _mapToEntity(
+      session.accessToken,
+      session.refreshToken ?? '',
+      UserModel.fromSupabase(session.user),
+    );
   }
 
   AuthEntity _mapToEntity(

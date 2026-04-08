@@ -1,3 +1,5 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'user_model.dart';
 
 class AuthResponseModel {
@@ -18,6 +20,14 @@ class AuthResponseModel {
       refreshToken:
           json['refresh_token'] as String? ?? json['refreshToken'] as String,
       user: UserModel.fromJson(json['user'] as Map<String, dynamic>),
+    );
+  }
+
+  factory AuthResponseModel.fromSupabase(Session session) {
+    return AuthResponseModel(
+      accessToken: session.accessToken,
+      refreshToken: session.refreshToken ?? '',
+      user: UserModel.fromSupabase(session.user),
     );
   }
 

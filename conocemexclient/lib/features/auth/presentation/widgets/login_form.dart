@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '/core/constants/app_constants.dart';
+import '/core/config/env.dart';
 import '/core/routes/app_routes.dart';
 import '../viewmodels/login_viewmodel.dart';
 
@@ -280,10 +281,18 @@ class _LoginFormState extends State<LoginForm> {
           // Google Login Button
           Consumer<LoginViewModel>(
             builder: (context, viewModel, _) {
+              final googleConfigured = Env.hasGoogleWebClientId;
               return OutlinedButton.icon(
-                onPressed: viewModel.isLoading ? null : _handleGoogleLogin,
+                onPressed:
+                    viewModel.isLoading || !googleConfigured
+                        ? null
+                        : _handleGoogleLogin,
                 icon: const Icon(Icons.g_mobiledata),
-                label: const Text('Iniciar con Google'),
+                label: Text(
+                  googleConfigured
+                      ? 'Iniciar con Google'
+                      : 'Google no configurado',
+                ),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
@@ -293,6 +302,16 @@ class _LoginFormState extends State<LoginForm> {
               );
             },
           ),
+          if (!Env.hasGoogleWebClientId) ...[
+            const SizedBox(height: 8),
+            Text(
+              'El login con Google se activará cuando configures GOOGLE_WEB_CLIENT_ID.',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.orange.shade700,
+                  ),
+            ),
+          ],
           const SizedBox(height: 16),
 
           // Biometric Login Button

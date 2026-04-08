@@ -20,12 +20,4 @@ class AppConstants {
   static const String refreshTokenKey = 'refresh_token';
   static const String userKey = 'user';
   static const String biometricEnabledKey = 'biometric_enabled';
-
-  // Google OAuth
-  static const String googleWebClientId =
-      'YOUR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com';
-  static const String googleAndroidClientId =
-      'YOUR_GOOGLE_ANDROID_CLIENT_ID.apps.googleusercontent.com';
-  static const String googleIosClientId =
-      'YOUR_GOOGLE_IOS_CLIENT_ID.apps.googleusercontent.com';
 }

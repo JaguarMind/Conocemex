@@ -1,96 +1,175 @@
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '/core/extensions/exceptions.dart';
-import '/core/network/api_client.dart';
+import '/core/config/env.dart';
+import '/core/extensions/exceptions.dart' as app_ex;
 import '../models/auth_response_model.dart';
 
 abstract class AuthRemoteDataSource {
   Future<AuthResponseModel> login(String email, String password);
   Future<AuthResponseModel> googleLogin();
-  Future<AuthResponseModel> refreshToken(String refreshToken);
+  Future<AuthResponseModel?> refreshToken(String refreshToken);
   Future<void> logout();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final ApiClient apiClient;
+  final SupabaseClient supabaseClient;
 
-  AuthRemoteDataSourceImpl(this.apiClient);
+  AuthRemoteDataSourceImpl(this.supabaseClient);
 
   @override
   Future<AuthResponseModel> login(String email, String password) async {
     try {
-      final response = await apiClient.login({
-        'email': email,
-        'password': password,
-      });
-      final data = response.data;
-      if (data == null) {
-        throw UnknownException('Respuesta vacia en login');
+      final response = await supabaseClient.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+
+      final session = response.session;
+      if (session == null) {
+        throw app_ex.AuthException('No se pudo obtener una sesión válida');
       }
-      return AuthResponseModel.fromJson(data);
+
+      return AuthResponseModel.fromSupabase(session);
     } on DioException catch (e) {
-      throw NetworkException(_mapDioError(e));
-    } catch (e) {
-      throw UnknownException('Error desconocido: $e');
+      debugPrint(
+        'AuthRemoteDataSource.login DioException: ${e.runtimeType} - ${e.message}',
+      );
+      debugPrint(e.toString());
+      throw app_ex.NetworkException(_mapDioError(e));
+    } catch (error, stackTrace) {
+      debugPrint(
+        'AuthRemoteDataSource.login unexpected error: ${error.runtimeType} - $error',
+      );
+      debugPrint(stackTrace.toString());
+      final message = error.toString().toLowerCase();
+      if (message.contains('auth') && message.contains('exception')) {
+        throw app_ex.AuthException(_mapSupabaseError(error.toString()));
+      }
+      throw app_ex.UnknownException('No fue posible iniciar sesión.');
     }
   }
 
   @override
   Future<AuthResponseModel> googleLogin() async {
     try {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
+      if (!Env.hasGoogleWebClientId) {
+        throw app_ex.ValidationException(
+          'Google no está configurado todavía. Falta el Client ID web.',
+        );
+      }
+
+      final googleSignIn = GoogleSignIn(
+        clientId: Env.googleIosClientId.isEmpty ? null : Env.googleIosClientId,
+        serverClientId: Env.googleWebClientId.isEmpty
+            ? null
+            : Env.googleWebClientId,
+      );
       final account = await googleSignIn.signIn();
 
       if (account == null) {
-        throw AuthException('Inicio de sesión con Google cancelado');
+        throw app_ex.AuthException('Inicio de sesión con Google cancelado');
       }
 
-      final auth = await account.authentication;
-      final response = await apiClient.googleLogin({
-        'token': auth.idToken ?? '',
-      });
-      final data = response.data;
-      if (data == null) {
-        throw UnknownException('Respuesta vacia en login con Google');
+      final authentication = await account.authentication;
+      final idToken = authentication.idToken;
+      if (idToken == null || idToken.isEmpty) {
+        throw app_ex.AuthException('No se pudo obtener el token de Google');
       }
-      return AuthResponseModel.fromJson(data);
+
+      final response = await supabaseClient.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: idToken,
+        accessToken: authentication.accessToken,
+      );
+
+      final session = response.session;
+      if (session == null) {
+        throw app_ex.AuthException('No se pudo obtener una sesión válida');
+      }
+
+      return AuthResponseModel.fromSupabase(session);
     } on DioException catch (e) {
-      throw NetworkException(_mapDioError(e));
-    } on AuthException {
-      rethrow;
-    } catch (_) {
-      throw AuthException('No fue posible iniciar sesión con Google');
+      debugPrint(
+        'AuthRemoteDataSource.googleLogin DioException: ${e.runtimeType} - ${e.message}',
+      );
+      debugPrint(e.toString());
+      throw app_ex.NetworkException(_mapDioError(e));
+    } catch (error, stackTrace) {
+      debugPrint(
+        'AuthRemoteDataSource.googleLogin unexpected error: ${error.runtimeType} - $error',
+      );
+      debugPrint(stackTrace.toString());
+      final message = error.toString().toLowerCase();
+      if (message.contains('auth') && message.contains('exception')) {
+        throw app_ex.AuthException(_mapSupabaseError(error.toString()));
+      }
+      throw app_ex.AuthException('No fue posible iniciar sesión con Google');
     }
   }
 
   @override
-  Future<AuthResponseModel> refreshToken(String refreshToken) async {
+  Future<AuthResponseModel?> refreshToken(String refreshToken) async {
     try {
-      final response = await apiClient.refreshToken({
-        'refresh_token': refreshToken,
-      });
-      final data = response.data;
-      if (data == null) {
-        throw UnknownException('Respuesta vacia en refresh token');
+      if (refreshToken.isEmpty) {
+        return null;
       }
-      return AuthResponseModel.fromJson(data);
+
+      final response = await supabaseClient.auth.refreshSession();
+      final session = response.session;
+      if (session == null) {
+        return null;
+      }
+
+      return AuthResponseModel.fromSupabase(session);
     } on DioException catch (e) {
-      throw NetworkException(_mapDioError(e));
-    } catch (e) {
-      throw UnknownException('Error desconocido: $e');
+      debugPrint(
+        'AuthRemoteDataSource.refreshToken DioException: ${e.runtimeType} - ${e.message}',
+      );
+      debugPrint(e.toString());
+      throw app_ex.NetworkException(_mapDioError(e));
+    } catch (error, stackTrace) {
+      debugPrint(
+        'AuthRemoteDataSource.refreshToken unexpected error: ${error.runtimeType} - $error',
+      );
+      debugPrint(stackTrace.toString());
+      throw app_ex.UnknownException('No fue posible renovar la sesión.');
     }
   }
 
   @override
   Future<void> logout() async {
     try {
-      await apiClient.logout();
+      await supabaseClient.auth.signOut();
     } on DioException catch (e) {
-      throw NetworkException(_mapDioError(e));
-    } catch (e) {
-      throw UnknownException('Error desconocido: $e');
+      debugPrint(
+        'AuthRemoteDataSource.logout DioException: ${e.runtimeType} - ${e.message}',
+      );
+      debugPrint(e.toString());
+      throw app_ex.NetworkException(_mapDioError(e));
+    } catch (error, stackTrace) {
+      debugPrint(
+        'AuthRemoteDataSource.logout unexpected error: ${error.runtimeType} - $error',
+      );
+      debugPrint(stackTrace.toString());
+      throw app_ex.UnknownException('No fue posible cerrar sesión.');
     }
+  }
+
+  String _mapSupabaseError(String message) {
+    final lowered = message.toLowerCase();
+    if (lowered.contains('invalid login credentials')) {
+      return 'Correo o contraseña incorrectos.';
+    }
+    if (lowered.contains('email not confirmed')) {
+      return 'Debes confirmar tu correo antes de iniciar sesión.';
+    }
+    if (lowered.contains('user already registered')) {
+      return 'Este correo ya está registrado.';
+    }
+    return 'No fue posible completar la autenticación.';
   }
 
   String _mapDioError(DioException e) {
@@ -98,22 +177,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.receiveTimeout:
       case DioExceptionType.sendTimeout:
-        return 'Tiempo de espera agotado';
+        return 'La solicitud tardó demasiado. Intenta nuevamente.';
       case DioExceptionType.connectionError:
-        return 'Sin conexión a internet o servidor no disponible';
+        return 'Sin conexión a internet o servidor no disponible.';
       case DioExceptionType.badResponse:
         final code = e.response?.statusCode;
-        if (code == 401) return 'Credenciales inválidas';
-        if (code == 403) return 'No tienes permisos para esta acción';
-        if (code == 404) return 'Servicio no encontrado';
-        if (code != null && code >= 500) return 'Error interno del servidor';
-        return 'Respuesta inválida del servidor';
+        if (code == 401) return 'Credenciales inválidas.';
+        if (code == 403) return 'No tienes permisos para esta acción.';
+        if (code == 404) return 'Servicio no encontrado.';
+        if (code != null && code >= 500) return 'Error interno del servidor.';
+        return 'Respuesta inválida del servidor.';
       case DioExceptionType.cancel:
-        return 'Solicitud cancelada';
+        return 'Solicitud cancelada.';
       case DioExceptionType.unknown:
-        return 'Error de conexión';
+        return 'Error de conexión.';
       case DioExceptionType.badCertificate:
-        return 'Certificado de seguridad inválido';
+        return 'Certificado de seguridad inválido.';
     }
   }
 }

@@ -1,3 +1,5 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 class UserModel {
   final String id;
   final String email;
@@ -29,6 +31,28 @@ class UserModel {
       createdAt: DateTime.parse(
         json['created_at'] as String? ?? json['createdAt'] as String,
       ),
+    );
+  }
+
+  factory UserModel.fromSupabase(User user) {
+    final metadata = user.userMetadata ?? const <String, dynamic>{};
+    return UserModel(
+      id: user.id,
+      email: user.email ?? '',
+      firstName:
+          (metadata['first_name'] as String?) ??
+          (metadata['firstName'] as String?) ??
+          '',
+      lastName:
+          (metadata['last_name'] as String?) ??
+          (metadata['lastName'] as String?) ??
+          '',
+      profilePicture:
+          (metadata['profile_picture'] as String?) ??
+          (metadata['avatar_url'] as String?) ??
+          (metadata['avatarUrl'] as String?) ??
+          user.userMetadata?['picture'] as String?,
+      createdAt: DateTime.tryParse(user.createdAt) ?? DateTime.now(),
     );
   }
 
