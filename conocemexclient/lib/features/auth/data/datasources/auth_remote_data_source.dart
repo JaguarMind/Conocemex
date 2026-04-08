@@ -62,7 +62,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       final googleSignIn = GoogleSignIn(
-        clientId: Env.googleIosClientId.isEmpty ? null : Env.googleIosClientId,
+        clientId: defaultTargetPlatform == TargetPlatform.iOS
+            ? (Env.googleIosClientId.isEmpty ? null : Env.googleIosClientId)
+            : null,
         serverClientId: Env.googleWebClientId.isEmpty
             ? null
             : Env.googleWebClientId,
