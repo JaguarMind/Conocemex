@@ -211,14 +211,30 @@ class _CreateOfferingPageState extends State<CreateOfferingPage> {
                   // 3. Formulario
                   _buildLabel('TIPO'),
                   const SizedBox(height: 4),
-                  SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'product', label: Text('Producto'), icon: Icon(Icons.shopping_bag)),
-                      ButtonSegment(value: 'service', label: Text('Servicio'), icon: Icon(Icons.design_services)),
-                    ],
-                    selected: {_selectedType},
-                    onSelectionChanged: (v) => setState(() => _selectedType = v.first),
-                    style: SegmentedButton.styleFrom(selectedBackgroundColor: _primaryGreen.withValues(alpha: 0.15), selectedForegroundColor: _darkBlue),
+                  SizedBox(
+                    width: double.infinity,
+                    child: SegmentedButton<String>(
+                      segments: const [
+                        ButtonSegment(value: 'product', label: Text('Producto')),
+                        ButtonSegment(value: 'service', label: Text('Servicio')),
+                      ],
+                      selected: {_selectedType},
+                      onSelectionChanged: (v) => setState(() => _selectedType = v.first),
+                      showSelectedIcon: false,
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.resolveWith((states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return _primaryGreen.withValues(alpha: 0.15);
+                          }
+                          return _bgGrey;
+                        }),
+                        foregroundColor: WidgetStateProperty.all(_darkBlue),
+                        textStyle: WidgetStateProperty.all(const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                        padding: WidgetStateProperty.all(const EdgeInsets.symmetric(vertical: 14)),
+                        shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                        side: WidgetStateProperty.all(BorderSide(color: _darkBlue.withValues(alpha: 0.08))),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 20),
 
@@ -281,7 +297,7 @@ class _CreateOfferingPageState extends State<CreateOfferingPage> {
   Widget _buildPhotoSection() {
     if (_isUploading) {
       return Container(
-        margin: const EdgeInsets.fromLTRB(20, 8, 20, 0), height: 180,
+        margin: const EdgeInsets.fromLTRB(20, 8, 20, 0), height: 150,
         decoration: BoxDecoration(color: _primaryGreen.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(16)),
         child: const Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           CircularProgressIndicator(color: _primaryGreen), SizedBox(height: 12),
@@ -293,7 +309,7 @@ class _CreateOfferingPageState extends State<CreateOfferingPage> {
       return GestureDetector(
         onTap: () => _showSourceSheet(title: 'Foto del producto', onPick: _pickProductImage),
         child: Container(
-          margin: const EdgeInsets.fromLTRB(20, 8, 20, 0), height: 180,
+          margin: const EdgeInsets.fromLTRB(20, 8, 20, 0), height: 150,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), image: DecorationImage(image: MemoryImage(_productImage!), fit: BoxFit.cover)),
           child: Container(
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [Colors.black.withValues(alpha: 0.5), Colors.transparent])),
@@ -306,7 +322,7 @@ class _CreateOfferingPageState extends State<CreateOfferingPage> {
     return GestureDetector(
       onTap: () => _showSourceSheet(title: 'Foto del producto', onPick: _pickProductImage),
       child: Container(
-        margin: const EdgeInsets.fromLTRB(20, 8, 20, 0), height: 180,
+        margin: const EdgeInsets.fromLTRB(20, 8, 20, 0), height: 150,
         decoration: BoxDecoration(color: _bgGrey, borderRadius: BorderRadius.circular(16), border: Border.all(color: _darkBlue.withValues(alpha: 0.08), width: 2)),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(width: 52, height: 52, decoration: BoxDecoration(color: _primaryGreen.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(14)), child: const Icon(Icons.add_a_photo, color: _primaryGreen, size: 26)),
@@ -332,15 +348,24 @@ class _CreateOfferingPageState extends State<CreateOfferingPage> {
         ]),
       );
     }
-    return OutlinedButton.icon(
-      onPressed: () => _showSourceSheet(title: 'Autocompletar con IA', onPick: _analyzeWithAi),
-      icon: const Icon(Icons.auto_awesome, color: _primaryGreen, size: 20),
-      label: const Text('Autocompletar campos con IA', style: TextStyle(fontWeight: FontWeight.w700, color: _darkBlue)),
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        side: BorderSide(color: _primaryGreen.withValues(alpha: 0.4), width: 2),
-        backgroundColor: _primaryGreen.withValues(alpha: 0.04),
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton(
+        onPressed: () => _showSourceSheet(title: 'Autocompletar con IA', onPick: _analyzeWithAi),
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          side: BorderSide(color: _primaryGreen.withValues(alpha: 0.4), width: 2),
+          backgroundColor: _primaryGreen.withValues(alpha: 0.04),
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.auto_awesome, color: _primaryGreen, size: 18),
+            SizedBox(width: 8),
+            Text('Autocompletar con IA', style: TextStyle(fontWeight: FontWeight.w700, color: _darkBlue, fontSize: 14)),
+          ],
+        ),
       ),
     );
   }

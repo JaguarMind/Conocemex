@@ -3,10 +3,16 @@ import 'package:flutter/material.dart';
 import '/features/auth/presentation/pages/catalog_page.dart';
 import '/features/auth/presentation/pages/home_page.dart';
 import '/features/auth/presentation/pages/orders_page.dart';
+import '/features/business/domain/entities/business_entity.dart';
 import '/features/profile/presentation/pages/profile_page.dart';
 
 class MainShellPage extends StatefulWidget {
   const MainShellPage({super.key});
+
+  /// Permite acceder al estado desde hijos via MainShellPage.of(context)
+  static _MainShellPageState? of(BuildContext context) {
+    return context.findAncestorStateOfType<_MainShellPageState>();
+  }
 
   @override
   State<MainShellPage> createState() => _MainShellPageState();
@@ -18,19 +24,35 @@ class _MainShellPageState extends State<MainShellPage> {
 
   int _currentIndex = 0;
 
-  final _pages = const [
-    HomePage(),
-    CatalogPage(),
-    OrdersPage(),
-    ProfilePage(),
-  ];
+  // Negocio seleccionado para el tab Catalog
+  BusinessEntity? _selectedBusiness;
+
+  final _catalogKey = GlobalKey<CatalogPageState>();
+
+  /// Llamado desde HomePage cuando el usuario toca un negocio
+  void goToCatalog(BusinessEntity business) {
+    setState(() {
+      _selectedBusiness = business;
+      _currentIndex = 1;
+    });
+    // Notificar al CatalogPage que cambie de negocio
+    _catalogKey.currentState?.selectBusiness(business);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
-        children: _pages,
+        children: [
+          const HomePage(),
+          CatalogPage(
+            key: _catalogKey,
+            initialBusiness: _selectedBusiness,
+          ),
+          const OrdersPage(),
+          const ProfilePage(),
+        ],
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -103,9 +125,7 @@ class _MainShellPageState extends State<MainShellPage> {
             width: 52,
             height: 52,
             decoration: BoxDecoration(
-              color: isActive
-                  ? _primaryGreen
-                  : _primaryGreen.withValues(alpha: 0.12),
+              color: isActive ? _primaryGreen : _primaryGreen.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(

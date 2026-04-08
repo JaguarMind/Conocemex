@@ -390,7 +390,7 @@ class _CreateBusinessPageState extends State<CreateBusinessPage> {
     if (_isUploading) {
       return Container(
         margin: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-        height: 200,
+        height: 150,
         decoration: BoxDecoration(
           color: _primaryGreen.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(16),
@@ -412,7 +412,7 @@ class _CreateBusinessPageState extends State<CreateBusinessPage> {
         onTap: _showImagePickerSheet,
         child: Container(
           margin: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-          height: 200,
+          height: 150,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             image: DecorationImage(image: MemoryImage(_businessImage!), fit: BoxFit.cover),
@@ -454,7 +454,7 @@ class _CreateBusinessPageState extends State<CreateBusinessPage> {
       onTap: _showImagePickerSheet,
       child: Container(
         margin: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-        height: 200,
+        height: 150,
         decoration: BoxDecoration(
           color: _bgGrey,
           borderRadius: BorderRadius.circular(16),
@@ -509,18 +509,24 @@ class _CreateBusinessPageState extends State<CreateBusinessPage> {
       );
     }
 
-    return OutlinedButton.icon(
-      onPressed: _showAiSheet,
-      icon: const Icon(Icons.auto_awesome, color: _primaryGreen, size: 20),
-      label: const Text(
-        'Autocompletar campos con IA',
-        style: TextStyle(fontWeight: FontWeight.w700, color: _darkBlue),
-      ),
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        side: BorderSide(color: _primaryGreen.withValues(alpha: 0.4), width: 2),
-        backgroundColor: _primaryGreen.withValues(alpha: 0.04),
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton(
+        onPressed: _showAiSheet,
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          side: BorderSide(color: _primaryGreen.withValues(alpha: 0.4), width: 2),
+          backgroundColor: _primaryGreen.withValues(alpha: 0.04),
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.auto_awesome, color: _primaryGreen, size: 18),
+            SizedBox(width: 8),
+            Text('Autocompletar con IA', style: TextStyle(fontWeight: FontWeight.w700, color: _darkBlue, fontSize: 14)),
+          ],
+        ),
       ),
     );
   }

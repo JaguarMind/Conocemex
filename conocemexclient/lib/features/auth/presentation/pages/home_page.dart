@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '/core/constants/app_constants.dart';
 import '/core/di/setup_dependencies.dart';
-import '/core/routes/app_routes.dart';
+import '/features/auth/presentation/pages/main_shell_page.dart';
 import '/features/business/domain/entities/business_entity.dart';
 import '/features/business/presentation/viewmodels/dashboard_viewmodel.dart';
 
@@ -184,7 +184,7 @@ class _HomePageState extends State<HomePage> {
       color: Colors.white,
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
-        onTap: () => AppRoutes.goToBusinessDetail(context, biz),
+        onTap: () => MainShellPage.of(context)?.goToCatalog(biz),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
