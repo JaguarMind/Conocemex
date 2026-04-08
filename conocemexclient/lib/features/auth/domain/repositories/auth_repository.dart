@@ -2,6 +2,7 @@ import '../entities/auth_entity.dart';
 
 abstract class AuthRepository {
   Future<AuthEntity> login(String email, String password);
+  Future<AuthEntity> signUp(String email, String password, String fullName);
   Future<AuthEntity> googleLogin();
   Future<AuthEntity> biometricLogin();
   Future<void> logout();

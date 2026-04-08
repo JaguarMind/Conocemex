@@ -8,6 +8,10 @@ class AppConstants {
   static const String loginRoute = '/login';
   static const String homeRoute = '/home';
   static const String splashRoute = '/';
+  static const String signUpRoute = '/signup';
+  static const String createBusinessRoute = '/business/create';
+  static const String businessDetailRoute = '/business/detail';
+  static const String createOfferingRoute = '/offering/create';
 
   // Biometric
   static const String biometricReason = 'Autentícate para acceder a Conocemex';

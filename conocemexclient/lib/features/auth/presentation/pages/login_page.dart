@@ -10,15 +10,10 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Iniciar Sesión'),
-        centerTitle: true,
-        elevation: 0,
-      ),
+      backgroundColor: Colors.white,
       body: Consumer<LoginViewModel>(
         builder: (context, viewModel, _) {
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+          return SafeArea(
             child: LoginForm(viewModel: viewModel),
           );
         },

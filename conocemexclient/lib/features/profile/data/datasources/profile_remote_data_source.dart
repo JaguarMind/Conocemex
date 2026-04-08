@@ -4,6 +4,7 @@ import '../models/profile_model.dart';
 
 abstract class ProfileRemoteDataSource {
   Future<ProfileModel?> getCurrentProfile();
+  Future<ProfileModel?> updateProfileRole(String role);
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -27,6 +28,21 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     if (row == null) {
       return ProfileModel.fromUserId(userId);
     }
+
+    return ProfileModel.fromSupabase(Map<String, dynamic>.from(row));
+  }
+
+  @override
+  Future<ProfileModel?> updateProfileRole(String role) async {
+    final userId = supabaseClient.auth.currentUser?.id;
+    if (userId == null) return null;
+
+    final row = await supabaseClient
+        .from('profiles')
+        .update({'role': role})
+        .eq('id', userId)
+        .select()
+        .single();
 
     return ProfileModel.fromSupabase(Map<String, dynamic>.from(row));
   }

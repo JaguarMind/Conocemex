@@ -7,6 +7,7 @@ import 'core/constants/app_constants.dart';
 import 'core/di/setup_dependencies.dart';
 import 'core/routes/app_routes.dart';
 import 'features/auth/presentation/viewmodels/login_viewmodel.dart';
+import 'features/business/presentation/viewmodels/dashboard_viewmodel.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,8 +23,15 @@ class ConocemexApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<LoginViewModel>.value(
-      value: getIt<LoginViewModel>(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<LoginViewModel>.value(
+          value: getIt<LoginViewModel>(),
+        ),
+        ChangeNotifierProvider<DashboardViewModel>.value(
+          value: getIt<DashboardViewModel>(),
+        ),
+      ],
       child: MaterialApp(
         title: 'Conocemex',
         debugShowCheckedModeBanner: false,

@@ -21,6 +21,20 @@ class Env {
       dotenv.env['GOOGLE_IOS_CLIENT_ID'] ??
       const String.fromEnvironment('GOOGLE_IOS_CLIENT_ID');
 
+  static String get geminiApiKey =>
+      dotenv.env['OPENROUTER_API_KEY'] ??
+      dotenv.env['GEMINI_API_KEY'] ??
+      const String.fromEnvironment('OPENROUTER_API_KEY');
+
+  static bool get hasGeminiApiKey =>
+      geminiApiKey.isNotEmpty;
+
+  static String get cloudinaryCloudName =>
+      dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? 'dmcrt5aoi';
+
+  static String get cloudinaryUploadPreset =>
+      dotenv.env['CLOUDINARY_UPLOAD_PRESET'] ?? 'conocemex_unsigned';
+
     static bool get hasGoogleWebClientId =>
       googleWebClientId.isNotEmpty && !googleWebClientId.startsWith('your_');
 

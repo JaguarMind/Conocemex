@@ -7,9 +7,11 @@ import '/features/auth/domain/usecases/biometric_login_usecase.dart';
 import '/features/auth/domain/usecases/google_login_usecase.dart';
 import '/features/auth/domain/usecases/login_usecase.dart';
 import '/features/auth/domain/usecases/logout_usecase.dart';
+import '/features/auth/domain/usecases/signup_usecase.dart';
 
 class LoginViewModel extends ChangeNotifier {
   final LoginUsecase loginUsecase;
+  final SignUpUsecase signUpUsecase;
   final GoogleLoginUsecase googleLoginUsecase;
   final BiometricLoginUsecase biometricLoginUsecase;
   final LogoutUsecase logoutUsecase;
@@ -29,6 +31,7 @@ class LoginViewModel extends ChangeNotifier {
 
   LoginViewModel({
     required this.loginUsecase,
+    required this.signUpUsecase,
     required this.googleLoginUsecase,
     required this.biometricLoginUsecase,
     required this.logoutUsecase,
@@ -60,6 +63,26 @@ class LoginViewModel extends ChangeNotifier {
     } catch (e, stackTrace) {
       debugPrint('LoginViewModel.login unexpected error: ${e.runtimeType} - $e');
       debugPrint(stackTrace.toString());
+      _error = _toUserFriendlyMessage(e.toString());
+      notifyListeners();
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> signUp(String email, String password, String fullName) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _auth = await signUpUsecase(email, password, fullName);
+      _error = null;
+      notifyListeners();
+    } catch (e) {
+      debugPrint('LoginViewModel.signUp error: $e');
       _error = _toUserFriendlyMessage(e.toString());
       notifyListeners();
       rethrow;
@@ -176,9 +199,19 @@ class LoginViewModel extends ChangeNotifier {
       return 'La solicitud tardó demasiado. Intenta nuevamente.';
     }
 
+    if (message.contains('rate limit') || message.contains('429')) {
+      return 'Demasiados intentos. Espera unos minutos e intenta de nuevo.';
+    }
+
+    if (message.contains('already registered') ||
+        message.contains('already been registered')) {
+      return 'Este correo ya esta registrado. Intenta iniciar sesion.';
+    }
+
     if (message.contains('401') ||
         message.contains('unauthorized') ||
-        message.contains('credenciales')) {
+        message.contains('credenciales') ||
+        message.contains('invalid login')) {
       return 'Correo o contraseña incorrectos.';
     }
 
