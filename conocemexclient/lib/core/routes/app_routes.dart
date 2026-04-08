@@ -5,6 +5,7 @@ import '/features/auth/presentation/pages/login_page.dart';
 import '/features/auth/presentation/pages/main_shell_page.dart';
 import '/features/auth/presentation/pages/signup_page.dart';
 import '/features/auth/presentation/pages/splash_page.dart';
+import '/features/profile/presentation/pages/onboarding_page.dart';
 import '/features/business/domain/entities/business_entity.dart';
 import '/features/business/presentation/pages/business_detail_page.dart';
 import '/features/business/presentation/pages/create_business_page.dart';
@@ -26,6 +27,11 @@ class AppRoutes {
       case AppConstants.signUpRoute:
         return MaterialPageRoute(
           builder: (_) => const SignUpPage(),
+          settings: settings,
+        );
+      case AppConstants.onboardingRoute:
+        return MaterialPageRoute(
+          builder: (_) => const OnboardingPage(),
           settings: settings,
         );
       case AppConstants.homeRoute:
@@ -74,6 +80,12 @@ class AppRoutes {
     Navigator.of(
       context,
     ).pushNamedAndRemoveUntil(AppConstants.splashRoute, (route) => false);
+  }
+
+  static void goToOnboarding(BuildContext context) {
+    Navigator.of(
+      context,
+    ).pushNamedAndRemoveUntil(AppConstants.onboardingRoute, (route) => false);
   }
 
   static void goToBusinessDetail(BuildContext context, BusinessEntity business) {

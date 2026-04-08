@@ -59,7 +59,7 @@ class _SignUpFormState extends State<_SignUpForm> {
         _passwordController.text,
         _nameController.text.trim(),
       );
-      if (mounted) AppRoutes.goToHome(context);
+      if (mounted) AppRoutes.goToOnboarding(context);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -75,7 +75,7 @@ class _SignUpFormState extends State<_SignUpForm> {
   Future<void> _handleGoogleSignUp() async {
     try {
       await widget.viewModel.googleLogin();
-      if (mounted) AppRoutes.goToHome(context);
+      if (mounted) AppRoutes.goToOnboarding(context);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

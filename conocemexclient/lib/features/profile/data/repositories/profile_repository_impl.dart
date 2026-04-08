@@ -18,4 +18,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
     final profile = await remoteDataSource.updateProfileRole(role);
     return profile?.toEntity();
   }
+
+  @override
+  Future<ProfileEntity?> updateProfile(Map<String, dynamic> data) async {
+    final profile = await remoteDataSource.updateProfile(data);
+    return profile?.toEntity();
+  }
 }

@@ -38,6 +38,7 @@ import '/features/profile/data/repositories/profile_repository_impl.dart';
 import '/features/profile/domain/repositories/profile_repository.dart';
 import '/features/profile/domain/usecases/get_current_profile_usecase.dart';
 import '/features/profile/domain/usecases/update_profile_role_usecase.dart';
+import '/features/profile/domain/usecases/update_profile_usecase.dart';
 
 final getIt = GetIt.instance;
 
@@ -82,6 +83,9 @@ Future<void> setupDependencies() async {
   );
   getIt.registerSingleton<UpdateProfileRoleUseCase>(
     UpdateProfileRoleUseCase(getIt<ProfileRepository>()),
+  );
+  getIt.registerSingleton<UpdateProfileUseCase>(
+    UpdateProfileUseCase(getIt<ProfileRepository>()),
   );
 
   // ─── Category ───

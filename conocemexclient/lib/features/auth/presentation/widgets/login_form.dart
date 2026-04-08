@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '/core/constants/app_constants.dart';
+import '/core/di/setup_dependencies.dart';
 import '/core/routes/app_routes.dart';
+import '/features/profile/domain/usecases/get_current_profile_usecase.dart';
 import '../viewmodels/login_viewmodel.dart';
 
 class LoginForm extends StatefulWidget {
@@ -35,7 +37,7 @@ class _LoginFormState extends State<LoginForm> {
   Future<void> _handleGoogleLogin() async {
     try {
       await widget.viewModel.googleLogin();
-      if (mounted) AppRoutes.goToHome(context);
+      if (mounted) await _navigateAfterLogin();
     } catch (e) {
       _showError(widget.viewModel.error ?? 'Error al iniciar sesion con Google');
     }
@@ -48,9 +50,24 @@ class _LoginFormState extends State<LoginForm> {
         _emailController.text.trim(),
         _passwordController.text,
       );
-      if (mounted) AppRoutes.goToHome(context);
+      if (mounted) await _navigateAfterLogin();
     } catch (e) {
       _showError(widget.viewModel.error ?? 'Error al iniciar sesion');
+    }
+  }
+
+  Future<void> _navigateAfterLogin() async {
+    if (!mounted) return;
+    try {
+      final profile = await getIt<GetCurrentProfileUseCase>()();
+      if (!mounted) return;
+      if (profile == null || !profile.onboardingCompleted) {
+        AppRoutes.goToOnboarding(context);
+      } else {
+        AppRoutes.goToHome(context);
+      }
+    } catch (_) {
+      if (mounted) AppRoutes.goToHome(context);
     }
   }
 
