@@ -1,5 +1,5 @@
-import { RouteGeneratorView } from '@/features/route-generator/views/route-generator-view';
+import { MyRoutesView } from '@/features/routes/views/my-routes-view';
 
 export default function RoutesPage() {
-  return <RouteGeneratorView />;
+  return <MyRoutesView />;
 }
