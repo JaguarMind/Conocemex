@@ -56,8 +56,12 @@ export function DirectChatView({ conversationId }: Props) {
           <h1 className="font-display font-bold text-on-surface text-sm truncate">{chatName}</h1>
           <div className="flex items-center gap-1">
             <span className="w-2 h-2 bg-primary-container rounded-full" />
-            <p className="text-[10px] text-on-surface-variant">Direct message</p>
+            <p className="text-[10px] text-on-surface-variant">Auto-translating</p>
           </div>
+        </div>
+        <div className="flex items-center gap-1 bg-primary-container/10 px-2.5 py-1 rounded-full">
+          <span className="material-symbols-outlined text-primary text-xs">translate</span>
+          <span className="text-[10px] font-bold text-primary">DeepL</span>
         </div>
       </header>
 
@@ -95,7 +99,17 @@ export function DirectChatView({ conversationId }: Props) {
                         : 'bg-surface-container-low text-on-surface rounded-2xl rounded-bl-md',
                     )}
                   >
-                    <p className="text-sm">{msg.content}</p>
+                    {!isMine && (msg as Record<string, unknown>)._translated && (msg as Record<string, unknown>)._translated !== msg.content ? (
+                      <>
+                        <p className="text-sm">{(msg as Record<string, unknown>)._translated as string}</p>
+                        <div className="flex items-center gap-1 mt-1.5 pt-1.5 border-t border-on-surface/5">
+                          <span className="material-symbols-outlined text-[11px] text-on-surface-variant/40">translate</span>
+                          <p className="text-[11px] text-on-surface-variant/40 italic">{msg.content}</p>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-sm">{msg.content}</p>
+                    )}
                   </div>
                   <span className="text-[10px] text-on-surface-variant/40 mt-0.5 px-1">
                     {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
