@@ -95,21 +95,41 @@ export function usePaymentViewModel() {
   }, [state.amountInput]);
 
   const onQrScanned = useCallback((data: string) => {
+    console.log('[QR] Scanned raw data:', data);
     try {
-      const parsed = JSON.parse(data) as ScannedPayment;
-      if (parsed.amount_mxn && parsed.merchant) {
+      // Try JSON format first (from CONOCEMEX vendor app)
+      const parsed = JSON.parse(data);
+      const amount = parsed.amount_mxn ?? parsed.amount ?? parsed.total ?? parsed.price ?? 0;
+      const merchant = parsed.merchant ?? parsed.business ?? parsed.name ?? 'Vendor';
+
+      if (amount > 0) {
         setState((prev) => ({
           ...prev,
-          scannedData: parsed,
-          totalMXN: parsed.amount_mxn,
+          scannedData: { merchant, amount_mxn: Number(amount), timestamp: parsed.timestamp ?? new Date().toISOString() },
+          totalMXN: Number(amount),
           step: 'confirm-payment',
           error: null,
         }));
       } else {
-        setState((prev) => ({ ...prev, error: 'Invalid QR code' }));
+        setState((prev) => ({ ...prev, error: 'QR does not contain a valid amount' }));
       }
     } catch {
-      setState((prev) => ({ ...prev, error: 'Could not read QR code' }));
+      // Not JSON — try to extract a number from the text (e.g. "$450" or "450.00")
+      const numberMatch = data.match(/[\d]+\.?[\d]*/);
+      if (numberMatch) {
+        const amount = parseFloat(numberMatch[0]);
+        if (amount > 0) {
+          setState((prev) => ({
+            ...prev,
+            scannedData: { merchant: 'Vendor', amount_mxn: amount, timestamp: new Date().toISOString() },
+            totalMXN: amount,
+            step: 'confirm-payment',
+            error: null,
+          }));
+          return;
+        }
+      }
+      setState((prev) => ({ ...prev, error: `QR read: "${data.substring(0, 50)}" — no amount found` }));
     }
   }, []);
 
