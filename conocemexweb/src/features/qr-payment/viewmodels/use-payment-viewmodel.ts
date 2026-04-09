@@ -96,9 +96,37 @@ export function usePaymentViewModel() {
 
   const onQrScanned = useCallback((data: string) => {
     console.log('[QR] Scanned raw data:', data);
+
+    // 1. If it's a URL (Mercado Pago, Stripe, etc.) — open it directly
+    if (data.startsWith('http://') || data.startsWith('https://')) {
+      window.open(data, '_blank');
+      setState((prev) => ({
+        ...prev,
+        scannedData: { merchant: 'Payment Link', amount_mxn: 0, timestamp: new Date().toISOString() },
+        step: 'confirm-payment',
+        error: null,
+      }));
+      return;
+    }
+
+    // 2. Try JSON format (from CONOCEMEX vendor app)
     try {
-      // Try JSON format first (from CONOCEMEX vendor app)
       const parsed = JSON.parse(data);
+
+      // If JSON contains a URL, open it
+      if (parsed.url || parsed.payment_url || parsed.link) {
+        const url = parsed.url ?? parsed.payment_url ?? parsed.link;
+        window.open(url, '_blank');
+        setState((prev) => ({
+          ...prev,
+          scannedData: { merchant: parsed.merchant ?? 'Vendor', amount_mxn: parsed.amount_mxn ?? 0, timestamp: new Date().toISOString() },
+          totalMXN: parsed.amount_mxn ?? 0,
+          step: 'confirm-payment',
+          error: null,
+        }));
+        return;
+      }
+
       const amount = parsed.amount_mxn ?? parsed.amount ?? parsed.total ?? parsed.price ?? 0;
       const merchant = parsed.merchant ?? parsed.business ?? parsed.name ?? 'Vendor';
 
@@ -114,7 +142,7 @@ export function usePaymentViewModel() {
         setState((prev) => ({ ...prev, error: 'QR does not contain a valid amount' }));
       }
     } catch {
-      // Not JSON — try to extract a number from the text (e.g. "$450" or "450.00")
+      // 3. Not JSON, not URL — try to extract a number
       const numberMatch = data.match(/[\d]+\.?[\d]*/);
       if (numberMatch) {
         const amount = parseFloat(numberMatch[0]);
@@ -129,7 +157,7 @@ export function usePaymentViewModel() {
           return;
         }
       }
-      setState((prev) => ({ ...prev, error: `QR read: "${data.substring(0, 50)}" — no amount found` }));
+      setState((prev) => ({ ...prev, error: `QR read: "${data.substring(0, 50)}" — not a payment link` }));
     }
   }, []);
 
