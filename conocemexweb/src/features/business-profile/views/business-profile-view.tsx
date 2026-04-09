@@ -3,6 +3,7 @@
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useBusinessViewModel } from '../viewmodels/use-business-viewmodel';
+import { ContactBusinessButton } from '@/features/direct-chat/views/contact-business-button';
 import { formatCurrency } from '@/core/utils/format';
 import { cn } from '@/core/utils/cn';
 
@@ -241,13 +242,7 @@ export function BusinessProfileView({ paramsPromise }: Props) {
             <span className="material-symbols-outlined text-lg">directions</span>
             Navigate
           </button>
-          <button
-            onClick={() => router.push(`/chat-setup?businessId=${id}&businessName=${encodeURIComponent(biz.name)}`)}
-            className="flex-1 bg-secondary-container text-on-secondary-container py-3.5 rounded-full font-display font-extrabold text-sm flex items-center justify-center gap-1.5 active:scale-95 transition-all"
-          >
-            <span className="material-symbols-outlined text-lg">chat</span>
-            Chat
-          </button>
+          <ContactBusinessButton businessId={id} businessName={biz.name} />
           <button
             onClick={() => router.push('/pay')}
             className="flex-1 bg-on-secondary-fixed text-white py-3.5 rounded-full font-display font-extrabold text-sm flex items-center justify-center gap-1.5 active:scale-95 transition-all"

@@ -8,6 +8,7 @@ import { MapContainer } from '@/components/shared/map-container';
 import { useOnboardingGuard } from '@/core/hooks/use-onboarding-guard';
 import { useRecommendations } from '../viewmodels/use-recommendations';
 import { searchBusinesses } from '../services/recommendation.service';
+import { ContactBusinessButton } from '@/features/direct-chat/views/contact-business-button';
 import { cn } from '@/core/utils/cn';
 import { formatDistance } from '@/core/utils/format';
 import type { RecommendationOnMap, ReasonTag } from '../models/map.types';
@@ -363,13 +364,7 @@ export function MapView() {
               >
                 {t('common.navigate')}
               </button>
-              <button
-                onClick={() => router.push(`/chat-setup?businessId=${selectedBusiness.id}&businessName=${encodeURIComponent(selectedBusiness.name)}`)}
-                className="bg-secondary-container text-on-secondary-container font-bold py-2.5 px-4 rounded-full text-sm active:scale-95 transition-all flex items-center gap-1"
-              >
-                <span className="material-symbols-outlined text-[16px]">chat</span>
-                Chat
-              </button>
+              <ContactBusinessButton businessId={selectedBusiness.id} businessName={selectedBusiness.name} variant="icon" />
               <button
                 onClick={() => router.push(`/business/${selectedBusiness.id}`)}
                 className="flex-1 bg-surface-container-low text-on-surface font-bold py-2.5 rounded-full text-sm active:scale-95 transition-all"
