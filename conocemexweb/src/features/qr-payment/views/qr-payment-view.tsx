@@ -15,7 +15,7 @@ export function QrPaymentView() {
 
     // If it's a URL — open it directly
     if (data.startsWith('http://') || data.startsWith('https://')) {
-      window.open(data, '_blank');
+      window.location.href = data;
       return;
     }
 
