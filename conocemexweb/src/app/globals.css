@@ -1,0 +1,204 @@
+@import "material-symbols/outlined.css";
+@import "tailwindcss";
+
+/* ============================================
+   CONOCEMEX — Azteca Moderno Design System
+   ============================================ */
+
+:root {
+  /* Primary — Vibrant Green */
+  --primary: #00DF5F;
+  --primary-container: #00DF5F;
+  --on-primary: #001F3F;
+  --on-primary-container: #001F3F;
+  --primary-fixed: #69ff88;
+  --primary-fixed-dim: #17e463;
+
+  /* Secondary — Deep Navy */
+  --secondary: #476083;
+  --secondary-fixed: #d4e3ff;
+  --secondary-fixed-dim: #afc8f0;
+  --secondary-container: #bdd6ff;
+  --on-secondary: #ffffff;
+  --on-secondary-fixed: #001F3F;
+  --on-secondary-container: #445d80;
+  --on-secondary-fixed-variant: #2f486a;
+
+  /* Tertiary / Accent — Hotspot Red */
+  --tertiary: #ba1c00;
+  --tertiary-container: #ffad9c;
+  --on-tertiary: #ffffff;
+  --on-tertiary-container: #9e1700;
+  --tertiary-fixed: #ffdad3;
+
+  /* Error */
+  --error: #ba1a1a;
+  --error-container: #ffdad6;
+  --on-error: #ffffff;
+  --on-error-container: #93000a;
+
+  /* Surfaces — Tonal Layering */
+  --surface: #ffffff;
+  --surface-bright: #ffffff;
+  --surface-dim: #dadada;
+  --surface-container: #eeeeee;
+  --surface-container-high: #e8e8e8;
+  --surface-container-highest: #e2e2e2;
+  --surface-container-low: #f3f3f4;
+  --surface-container-lowest: #ffffff;
+  --surface-variant: #e2e2e2;
+  --surface-tint: #006e2b;
+
+  /* Text */
+  --on-surface: #1a1c1c;
+  --on-surface-variant: #3c4b3b;
+  --on-background: #1a1c1c;
+  --outline: #6b7b6a;
+  --outline-variant: #bacbb7;
+
+  /* Inverse */
+  --inverse-surface: #2f3131;
+  --inverse-on-surface: #f0f1f1;
+  --inverse-primary: #17e463;
+
+  /* Background */
+  --background: #ffffff;
+  --foreground: #1a1c1c;
+
+  /* Shadows — Ambient Stadium Lighting */
+  --shadow-ambient: 0 4px 32px rgba(0, 28, 58, 0.06);
+  --shadow-elevated: 0 8px 40px rgba(0, 28, 58, 0.10);
+  --shadow-glow-primary: 0 12px 32px -8px rgba(0, 223, 95, 0.45);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Primary */
+  --color-primary: var(--primary);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary: var(--on-primary);
+  --color-on-primary-container: var(--on-primary-container);
+
+  /* Secondary */
+  --color-secondary: var(--secondary);
+  --color-secondary-fixed: var(--secondary-fixed);
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary: var(--on-secondary);
+  --color-on-secondary-fixed: var(--on-secondary-fixed);
+  --color-on-secondary-container: var(--on-secondary-container);
+
+  /* Tertiary */
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary: var(--on-tertiary);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+
+  /* Surfaces */
+  --color-surface: var(--surface);
+  --color-surface-bright: var(--surface-bright);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-variant: var(--surface-variant);
+
+  /* Text */
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-on-background: var(--on-background);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+
+  /* Error */
+  --color-error: var(--error);
+  --color-error-container: var(--error-container);
+  --color-on-error: var(--on-error);
+
+  /* Fonts */
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Roundedness Scale */
+  --radius-sm: 0.5rem;
+  --radius-default: 1rem;
+  --radius-lg: 2rem;
+  --radius-xl: 3rem;
+  --radius-full: 9999px;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+}
+
+/* Glass Surface utility */
+.glass {
+  background: rgba(255, 255, 255, 0.80);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* Material Symbols */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Bill gradients — USD */
+.bill-gradient-20 { background: linear-gradient(135deg, #d1e8d5 0%, #b8d4bc 100%); }
+.bill-gradient-10 { background: linear-gradient(135deg, #e8dcd1 0%, #d4c5b8 100%); }
+.bill-gradient-5 { background: linear-gradient(135deg, #d1d8e8 0%, #b8c1d4 100%); }
+.bill-gradient-1 { background: linear-gradient(135deg, #e2e2e2 0%, #cccccc 100%); }
+
+/* Bill gradients — EUR (warm tones) */
+.bill-gradient-eur-50 { background: linear-gradient(135deg, #f5d6a8 0%, #e8c495 100%); }
+.bill-gradient-eur-20 { background: linear-gradient(135deg, #c8d8f0 0%, #a8bfe0 100%); }
+.bill-gradient-eur-10 { background: linear-gradient(135deg, #f0d0d0 0%, #e0b8b8 100%); }
+.bill-gradient-eur-5 { background: linear-gradient(135deg, #d8e8d8 0%, #c0d4c0 100%); }
+
+/* Bill gradients — GBP (purples & blues) */
+.bill-gradient-gbp-20 { background: linear-gradient(135deg, #d8c8e8 0%, #c0aed8 100%); }
+.bill-gradient-gbp-10 { background: linear-gradient(135deg, #e8d0c0 0%, #d8bca8 100%); }
+.bill-gradient-gbp-5 { background: linear-gradient(135deg, #c8e0e8 0%, #a8ccd8 100%); }
+
+/* Bill gradients — CAD (reds & greens) */
+.bill-gradient-cad-20 { background: linear-gradient(135deg, #c8e8c8 0%, #a8d4a8 100%); }
+.bill-gradient-cad-10 { background: linear-gradient(135deg, #d8c8e8 0%, #c0aed8 100%); }
+.bill-gradient-cad-5 { background: linear-gradient(135deg, #c8d8f0 0%, #a8c0e0 100%); }
+
+/* Bill gradients — BRL (warm earth) */
+.bill-gradient-brl-50 { background: linear-gradient(135deg, #e0d0c0 0%, #d0bca8 100%); }
+.bill-gradient-brl-20 { background: linear-gradient(135deg, #f0e0c8 0%, #e0d0b0 100%); }
+.bill-gradient-brl-10 { background: linear-gradient(135deg, #c8d8e8 0%, #b0c4d8 100%); }
+.bill-gradient-brl-5 { background: linear-gradient(135deg, #d8d0e0 0%, #c4b8d0 100%); }
+
+/* Bill gradients — MXN (vivid Mexican palette) */
+.bill-gradient-mxn-500 { background: linear-gradient(135deg, #c8d0e8 0%, #a8b8d8 100%); }
+.bill-gradient-mxn-200 { background: linear-gradient(135deg, #c8e8d0 0%, #a8d8b8 100%); }
+.bill-gradient-mxn-100 { background: linear-gradient(135deg, #f0d0c8 0%, #e0b8a8 100%); }
+.bill-gradient-mxn-50 { background: linear-gradient(135deg, #f0d8e8 0%, #e0c0d8 100%); }
+
+/* Hide scrollbar utility */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Slide up animation */
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
