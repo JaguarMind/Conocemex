@@ -1,6 +1,3 @@
 {
-  "buildCommand": "cd conocemexweb && npm run build",
-  "installCommand": "cd conocemexweb && npm install",
-  "outputDirectory": "conocemexweb/.next",
-  "framework": "nextjs"
+  "rootDirectory": "conocemexweb"
 }
