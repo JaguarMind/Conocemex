@@ -1,52 +1,66 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { currencyService } from '../services/currency.service';
-import type { CurrencyViewState } from '../models/currency.types';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+
+const EXCHANGE_API = 'https://open.er-api.com/v6/latest';
+
+const CURRENCIES = [
+  { code: 'MXN', symbol: '$', flag: '🇲🇽', name: 'Mexican Peso' },
+  { code: 'USD', symbol: '$', flag: '🇺🇸', name: 'US Dollar' },
+  { code: 'EUR', symbol: '€', flag: '🇪🇺', name: 'Euro' },
+  { code: 'GBP', symbol: '£', flag: '🇬🇧', name: 'British Pound' },
+  { code: 'CAD', symbol: 'C$', flag: '🇨🇦', name: 'Canadian Dollar' },
+  { code: 'BRL', symbol: 'R$', flag: '🇧🇷', name: 'Brazilian Real' },
+  { code: 'JPY', symbol: '¥', flag: '🇯🇵', name: 'Japanese Yen' },
+  { code: 'KRW', symbol: '₩', flag: '🇰🇷', name: 'Korean Won' },
+];
 
 export function useCurrencyViewModel() {
-  const [state, setState] = useState<CurrencyViewState>({
-    amount: 100,
-    fromCurrency: 'MXN',
-    toCurrency: 'USD',
-    rate: null,
-    convertedAmount: null,
-    isLoading: false,
-    error: null,
-  });
-
-  const fetchRate = useCallback(async () => {
-    setState((prev) => ({ ...prev, isLoading: true, error: null }));
-    try {
-      const rate = await currencyService.getRate(state.fromCurrency, state.toCurrency);
-      const converted = state.amount * rate.rate;
-      setState((prev) => ({
-        ...prev,
-        rate,
-        convertedAmount: converted,
-        isLoading: false,
-      }));
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error fetching rate';
-      setState((prev) => ({ ...prev, error: message, isLoading: false }));
-    }
-  }, [state.fromCurrency, state.toCurrency, state.amount]);
+  const [amount, setAmount] = useState('100');
+  const [fromCurrency, setFromCurrency] = useState('USD');
+  const [toCurrency, setToCurrency] = useState('MXN');
+  const [rates, setRates] = useState<Record<string, number>>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState('');
 
   useEffect(() => {
-    fetchRate();
-  }, [fetchRate]);
+    let cancelled = false;
+    async function fetchRates() {
+      setIsLoading(true);
+      try {
+        const res = await fetch(`${EXCHANGE_API}/${fromCurrency}`);
+        const data = await res.json();
+        if (!cancelled && data.rates) {
+          setRates(data.rates);
+          setLastUpdated(data.time_last_update_utc ?? new Date().toISOString());
+        }
+      } catch { /* fallback */ }
+      if (!cancelled) setIsLoading(false);
+    }
+    fetchRates();
+    return () => { cancelled = true; };
+  }, [fromCurrency]);
 
-  const setAmount = useCallback((amount: number) => {
-    setState((prev) => ({ ...prev, amount }));
-  }, []);
+  const convertedAmount = useMemo(() => {
+    const num = parseFloat(amount) || 0;
+    const rate = rates[toCurrency] ?? 0;
+    return num * rate;
+  }, [amount, rates, toCurrency]);
 
-  const setFromCurrency = useCallback((currency: string) => {
-    setState((prev) => ({ ...prev, fromCurrency: currency }));
-  }, []);
+  const rate = rates[toCurrency] ?? 0;
 
-  const setToCurrency = useCallback((currency: string) => {
-    setState((prev) => ({ ...prev, toCurrency: currency }));
-  }, []);
+  const swap = useCallback(() => {
+    setFromCurrency(toCurrency);
+    setToCurrency(fromCurrency);
+  }, [fromCurrency, toCurrency]);
 
-  return { ...state, setAmount, setFromCurrency, setToCurrency, refresh: fetchRate };
+  return {
+    amount, setAmount,
+    fromCurrency, setFromCurrency,
+    toCurrency, setToCurrency,
+    convertedAmount, rate,
+    isLoading, lastUpdated,
+    currencies: CURRENCIES,
+    swap,
+  };
 }
