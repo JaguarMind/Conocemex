@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '/core/di/setup_dependencies.dart';
 import '/core/routes/app_routes.dart';
+import '/l10n/app_localizations.dart';
 import '../viewmodels/login_viewmodel.dart';
 
 class SignUpPage extends StatelessWidget {
@@ -64,7 +65,7 @@ class _SignUpFormState extends State<_SignUpForm> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(widget.viewModel.error ?? 'Error al registrarse'),
+            content: Text(widget.viewModel.error ?? AppLocalizations.of(context)!.errorSignUp),
             backgroundColor: Colors.red,
           ),
         );
@@ -80,7 +81,7 @@ class _SignUpFormState extends State<_SignUpForm> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(widget.viewModel.error ?? 'Error con Google'),
+            content: Text(widget.viewModel.error ?? AppLocalizations.of(context)!.errorLoginGoogle),
             backgroundColor: Colors.red,
           ),
         );
@@ -105,9 +106,9 @@ class _SignUpFormState extends State<_SignUpForm> {
                   child: const Icon(Icons.arrow_back, color: _darkBlue),
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  'CONOCEMEX',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.appName,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w900,
                     color: _darkBlue,
@@ -120,9 +121,9 @@ class _SignUpFormState extends State<_SignUpForm> {
 
           // ─── Titulo ───
           const SizedBox(height: 28),
-          const Text(
-            'Create your\naccount',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.createAccount,
+            style: const TextStyle(
               fontSize: 40,
               fontWeight: FontWeight.w900,
               color: _darkBlue,
@@ -132,7 +133,7 @@ class _SignUpFormState extends State<_SignUpForm> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Registrate como vendedor para dar a conocer tu negocio.',
+            AppLocalizations.of(context)!.createAccountSubtitle,
             style: TextStyle(
               fontSize: 15,
               color: _darkBlue.withValues(alpha: 0.5),
@@ -166,9 +167,9 @@ class _SignUpFormState extends State<_SignUpForm> {
                             const Icon(Icons.g_mobiledata, size: 24),
                       ),
                       const SizedBox(width: 12),
-                      const Text(
-                        'Sign up with Google',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.signUpWithGoogle,
+                        style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
                           color: _darkBlue,
@@ -191,7 +192,7 @@ class _SignUpFormState extends State<_SignUpForm> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    'OR',
+                    AppLocalizations.of(context)!.or,
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w900,
@@ -212,35 +213,35 @@ class _SignUpFormState extends State<_SignUpForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildLabel('FULL NAME'),
+                _buildLabel(AppLocalizations.of(context)!.fullNameLabel),
                 _buildTextField(
                   controller: _nameController,
                   hint: 'Juan Perez',
                   keyboardType: TextInputType.name,
                   validator: (v) => (v == null || v.trim().isEmpty)
-                      ? 'El nombre es requerido'
+                      ? AppLocalizations.of(context)!.nameRequired
                       : null,
                 ),
                 const SizedBox(height: 18),
 
-                _buildLabel('EMAIL'),
+                _buildLabel(AppLocalizations.of(context)!.emailLabel),
                 _buildTextField(
                   controller: _emailController,
                   hint: 'vendedor@correo.com',
                   keyboardType: TextInputType.emailAddress,
                   validator: (v) {
                     if (v == null || v.trim().isEmpty) {
-                      return 'El correo es requerido';
+                      return AppLocalizations.of(context)!.emailRequired;
                     }
                     if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v)) {
-                      return 'Correo invalido';
+                      return AppLocalizations.of(context)!.invalidEmail;
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 18),
 
-                _buildLabel('PASSWORD'),
+                _buildLabel(AppLocalizations.of(context)!.passwordLabel),
                 _buildTextField(
                   controller: _passwordController,
                   hint: 'Minimo 6 caracteres',
@@ -256,14 +257,14 @@ class _SignUpFormState extends State<_SignUpForm> {
                         setState(() => _obscurePassword = !_obscurePassword),
                   ),
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'Contrasena requerida';
-                    if (v.length < 6) return 'Minimo 6 caracteres';
+                    if (v == null || v.isEmpty) return AppLocalizations.of(context)!.passwordRequired;
+                    if (v.length < 6) return AppLocalizations.of(context)!.minChars;
                     return null;
                   },
                 ),
                 const SizedBox(height: 18),
 
-                _buildLabel('CONFIRM PASSWORD'),
+                _buildLabel(AppLocalizations.of(context)!.confirmPasswordLabel),
                 _buildTextField(
                   controller: _confirmPasswordController,
                   hint: 'Repite tu contrasena',
@@ -279,9 +280,9 @@ class _SignUpFormState extends State<_SignUpForm> {
                         setState(() => _obscureConfirm = !_obscureConfirm),
                   ),
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'Confirma tu contrasena';
+                    if (v == null || v.isEmpty) return AppLocalizations.of(context)!.passwordRequired;
                     if (v != _passwordController.text) {
-                      return 'Las contrasenas no coinciden';
+                      return AppLocalizations.of(context)!.passwordsDontMatch;
                     }
                     return null;
                   },
@@ -314,9 +315,9 @@ class _SignUpFormState extends State<_SignUpForm> {
                                   color: _darkBlue,
                                 ),
                               )
-                            : const Text(
-                                'Sign Up',
-                                style: TextStyle(
+                            : Text(
+                                AppLocalizations.of(context)!.signUp,
+                                style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w900,
                                 ),
@@ -375,7 +376,7 @@ class _SignUpFormState extends State<_SignUpForm> {
           Center(
             child: Text.rich(
               TextSpan(
-                text: 'Already have an account? ',
+                text: AppLocalizations.of(context)!.alreadyHaveAccount,
                 style: TextStyle(
                   color: const Color(0xFF476083),
                   fontSize: 14,
@@ -385,9 +386,9 @@ class _SignUpFormState extends State<_SignUpForm> {
                   WidgetSpan(
                     child: GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: const Text(
-                        'Log In',
-                        style: TextStyle(
+                      child: Text(
+                        AppLocalizations.of(context)!.logInLink,
+                        style: const TextStyle(
                           color: _primaryGreen,
                           fontSize: 14,
                           fontWeight: FontWeight.w900,

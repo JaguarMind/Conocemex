@@ -5,6 +5,7 @@ import '/features/auth/presentation/pages/login_page.dart';
 import '/features/auth/presentation/pages/main_shell_page.dart';
 import '/features/auth/presentation/pages/signup_page.dart';
 import '/features/auth/presentation/pages/splash_page.dart';
+import '/features/profile/presentation/pages/edit_profile_page.dart';
 import '/features/profile/presentation/pages/onboarding_page.dart';
 import '/features/business/domain/entities/business_entity.dart';
 import '/features/business/presentation/pages/business_detail_page.dart';
@@ -27,6 +28,11 @@ class AppRoutes {
       case AppConstants.signUpRoute:
         return MaterialPageRoute(
           builder: (_) => const SignUpPage(),
+          settings: settings,
+        );
+      case AppConstants.editProfileRoute:
+        return MaterialPageRoute(
+          builder: (_) => const EditProfilePage(),
           settings: settings,
         );
       case AppConstants.onboardingRoute:

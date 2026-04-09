@@ -5,6 +5,7 @@ import '/core/constants/app_constants.dart';
 import '/core/di/setup_dependencies.dart';
 import '/core/routes/app_routes.dart';
 import '/features/profile/domain/usecases/get_current_profile_usecase.dart';
+import '/l10n/app_localizations.dart';
 import '../viewmodels/login_viewmodel.dart';
 
 class LoginForm extends StatefulWidget {
@@ -39,7 +40,7 @@ class _LoginFormState extends State<LoginForm> {
       await widget.viewModel.googleLogin();
       if (mounted) await _navigateAfterLogin();
     } catch (e) {
-      _showError(widget.viewModel.error ?? 'Error al iniciar sesion con Google');
+      _showError(widget.viewModel.error ?? AppLocalizations.of(context)!.errorLoginGoogle);
     }
   }
 
@@ -52,7 +53,7 @@ class _LoginFormState extends State<LoginForm> {
       );
       if (mounted) await _navigateAfterLogin();
     } catch (e) {
-      _showError(widget.viewModel.error ?? 'Error al iniciar sesion');
+      _showError(widget.viewModel.error ?? AppLocalizations.of(context)!.errorLogin);
     }
   }
 
@@ -88,40 +89,22 @@ class _LoginFormState extends State<LoginForm> {
           // ─── Header ───
           Padding(
             padding: const EdgeInsets.only(top: 24),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'CONOCEMEX',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    color: _darkBlue,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => AppRoutes.goToHome(context),
-                  style: TextButton.styleFrom(
-                    foregroundColor: const Color(0xFF476083),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                  ),
-                  child: const Text(
-                    'Skip',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                  ),
-                ),
-              ],
+            child: Text(
+              AppLocalizations.of(context)!.appName,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+                color: _darkBlue,
+                letterSpacing: 0.5,
+              ),
             ),
           ),
 
           // ─── Titulo ───
           const SizedBox(height: 32),
-          const Text(
-            'Welcome to\nMexico',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.welcomeTo,
+            style: const TextStyle(
               fontSize: 48,
               fontWeight: FontWeight.w900,
               color: _darkBlue,
@@ -156,9 +139,9 @@ class _LoginFormState extends State<LoginForm> {
                             const Icon(Icons.g_mobiledata, size: 24),
                       ),
                       const SizedBox(width: 12),
-                      const Text(
-                        'Continue with Google',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.continueWithGoogle,
+                        style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
                           color: _darkBlue,
@@ -180,7 +163,7 @@ class _LoginFormState extends State<LoginForm> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    'OR',
+                    AppLocalizations.of(context)!.or,
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w900,
@@ -204,7 +187,7 @@ class _LoginFormState extends State<LoginForm> {
                 Padding(
                   padding: const EdgeInsets.only(left: 4, bottom: 6),
                   child: Text(
-                    'EMAIL',
+                    AppLocalizations.of(context)!.emailLabel,
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w900,
@@ -221,7 +204,7 @@ class _LoginFormState extends State<LoginForm> {
                     color: _darkBlue,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'example@conocemex.com',
+                    hintText: AppLocalizations.of(context)!.emailHint,
                     hintStyle: TextStyle(
                       color: _darkBlue.withValues(alpha: 0.3),
                       fontWeight: FontWeight.w600,
@@ -242,9 +225,9 @@ class _LoginFormState extends State<LoginForm> {
                     ),
                   ),
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'El correo es requerido';
+                    if (v == null || v.trim().isEmpty) return AppLocalizations.of(context)!.emailRequired;
                     if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v)) {
-                      return 'Ingresa un correo valido';
+                      return AppLocalizations.of(context)!.invalidEmail;
                     }
                     return null;
                   },
@@ -258,7 +241,7 @@ class _LoginFormState extends State<LoginForm> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'PASSWORD',
+                        AppLocalizations.of(context)!.passwordLabel,
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w900,
@@ -270,9 +253,9 @@ class _LoginFormState extends State<LoginForm> {
                         onTap: () {
                           // TODO: forgot password
                         },
-                        child: const Text(
-                          'FORGOT?',
-                          style: TextStyle(
+                        child: Text(
+                          AppLocalizations.of(context)!.forgotPassword,
+                          style: const TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w900,
                             color: _primaryGreen,
@@ -320,8 +303,8 @@ class _LoginFormState extends State<LoginForm> {
                     ),
                   ),
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'La contrasena es requerida';
-                    if (v.length < 6) return 'Minimo 6 caracteres';
+                    if (v == null || v.isEmpty) return AppLocalizations.of(context)!.passwordRequired;
+                    if (v.length < 6) return AppLocalizations.of(context)!.minChars;
                     return null;
                   },
                 ),
@@ -353,9 +336,9 @@ class _LoginFormState extends State<LoginForm> {
                                   color: _darkBlue,
                                 ),
                               )
-                            : const Text(
-                                'Log In',
-                                style: TextStyle(
+                            : Text(
+                                AppLocalizations.of(context)!.logIn,
+                                style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w900,
                                 ),
@@ -410,7 +393,7 @@ class _LoginFormState extends State<LoginForm> {
           Center(
             child: Text.rich(
               TextSpan(
-                text: "Don't have an account? ",
+                text: AppLocalizations.of(context)!.dontHaveAccount,
                 style: TextStyle(
                   color: const Color(0xFF476083),
                   fontSize: 14,
@@ -423,41 +406,15 @@ class _LoginFormState extends State<LoginForm> {
                         context,
                         AppConstants.signUpRoute,
                       ),
-                      child: const Text(
-                        'Sign Up',
-                        style: TextStyle(
+                      child: Text(
+                        AppLocalizations.of(context)!.signUpLink,
+                        style: const TextStyle(
                           color: _primaryGreen,
                           fontSize: 14,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Center(
-            child: TextButton(
-              onPressed: () => AppRoutes.goToHome(context),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'SKIP & CONTINUE AS GUEST',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w900,
-                      color: _darkBlue.withValues(alpha: 0.35),
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.arrow_forward,
-                    size: 14,
-                    color: _darkBlue.withValues(alpha: 0.35),
                   ),
                 ],
               ),

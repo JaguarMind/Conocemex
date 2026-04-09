@@ -29,6 +29,12 @@ class Env {
   static bool get hasGeminiApiKey =>
       geminiApiKey.isNotEmpty;
 
+  static String get deeplApiKey =>
+      dotenv.env['DEEPL_API_KEY'] ??
+      const String.fromEnvironment('DEEPL_API_KEY');
+
+  static bool get hasDeeplApiKey => deeplApiKey.isNotEmpty;
+
   static String get cloudinaryCloudName =>
       dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? 'dmcrt5aoi';
 

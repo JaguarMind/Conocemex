@@ -6,6 +6,7 @@ import '/core/di/setup_dependencies.dart';
 import '/features/auth/presentation/pages/main_shell_page.dart';
 import '/features/business/domain/entities/business_entity.dart';
 import '/features/business/presentation/viewmodels/dashboard_viewmodel.dart';
+import '/l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,20 +19,16 @@ class _HomePageState extends State<HomePage> {
   static const _darkBlue = Color(0xFF001F3F);
   static const _primaryGreen = Color(0xFF00DF5F);
 
-  @override
-  void initState() {
-    super.initState();
-    getIt<DashboardViewModel>().loadDashboard();
-  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
-          'Mi Panel',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.myPanel,
+          style: const TextStyle(
             fontWeight: FontWeight.w800,
             color: _darkBlue,
           ),
@@ -64,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () => viewModel.loadDashboard(),
-                        child: const Text('Reintentar'),
+                        child: Text(AppLocalizations.of(context)!.retry),
                       ),
                     ],
                   ),
@@ -88,9 +85,9 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: _primaryGreen,
             foregroundColor: _darkBlue,
             icon: const Icon(Icons.add),
-            label: const Text(
-              'Agregar negocio',
-              style: TextStyle(fontWeight: FontWeight.w700),
+            label: Text(
+              AppLocalizations.of(context)!.addBusiness,
+              style: const TextStyle(fontWeight: FontWeight.w700),
             ),
           );
         },
@@ -115,9 +112,9 @@ class _HomePageState extends State<HomePage> {
               child: const Icon(Icons.store, size: 44, color: _primaryGreen),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Bienvenido a Conocemex',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.welcomeConocemex,
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
                 color: _darkBlue,
@@ -126,7 +123,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Registra tu negocio para que turistas\nde todo el mundo puedan descubrirte.',
+              AppLocalizations.of(context)!.welcomeSubtitle,
               style: TextStyle(
                 fontSize: 15,
                 color: _darkBlue.withValues(alpha: 0.45),
@@ -138,7 +135,7 @@ class _HomePageState extends State<HomePage> {
             ElevatedButton.icon(
               onPressed: () => _goToCreateBusiness(context),
               icon: const Icon(Icons.add),
-              label: const Text('Agregar mi primer negocio'),
+              label: Text(AppLocalizations.of(context)!.addFirstBusiness),
               style: ElevatedButton.styleFrom(
                 backgroundColor: _primaryGreen,
                 foregroundColor: _darkBlue,
@@ -213,7 +210,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      biz.categoryName ?? 'Sin categoria',
+                      biz.categoryName ?? AppLocalizations.of(context)!.noCategory,
                       style: TextStyle(
                         fontSize: 13,
                         color: _darkBlue.withValues(alpha: 0.45),
@@ -256,7 +253,7 @@ class _HomePageState extends State<HomePage> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      biz.isActive ? 'Activo' : 'Inactivo',
+                      biz.isActive ? AppLocalizations.of(context)!.active : AppLocalizations.of(context)!.inactive,
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,

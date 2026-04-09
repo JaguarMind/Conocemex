@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '/core/di/setup_dependencies.dart';
+import '/core/services/locale_service.dart';
 import '/features/auth/presentation/pages/catalog_page.dart';
+import '/features/auth/presentation/pages/communities_page.dart';
 import '/features/auth/presentation/pages/home_page.dart';
-import '/features/auth/presentation/pages/orders_page.dart';
 import '/features/business/domain/entities/business_entity.dart';
+import '/features/business/presentation/viewmodels/dashboard_viewmodel.dart';
 import '/features/profile/presentation/pages/profile_page.dart';
+import '/l10n/app_localizations.dart';
 
 class MainShellPage extends StatefulWidget {
   const MainShellPage({super.key});
@@ -29,6 +33,14 @@ class _MainShellPageState extends State<MainShellPage> {
 
   final _catalogKey = GlobalKey<CatalogPageState>();
 
+  @override
+  void initState() {
+    super.initState();
+    // Cargar perfil + negocios + idioma al entrar a la shell
+    getIt<DashboardViewModel>().loadDashboard();
+    getIt<LocaleService>().loadFromSupabase();
+  }
+
   /// Llamado desde HomePage cuando el usuario toca un negocio
   void goToCatalog(BusinessEntity business) {
     setState(() {
@@ -50,7 +62,7 @@ class _MainShellPageState extends State<MainShellPage> {
             key: _catalogKey,
             initialBusiness: _selectedBusiness,
           ),
-          const OrdersPage(),
+          const CommunitiesPage(),
           const ProfilePage(),
         ],
       ),
@@ -71,10 +83,10 @@ class _MainShellPageState extends State<MainShellPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(0, Icons.home_outlined, Icons.home, 'Home'),
+                _buildNavItem(0, Icons.home_outlined, Icons.home, AppLocalizations.of(context)!.navHome),
                 _buildCatalogItem(),
-                _buildNavItem(2, Icons.receipt_long_outlined, Icons.receipt_long, 'Orders'),
-                _buildNavItem(3, Icons.person_outline, Icons.person, 'Profile'),
+                _buildNavItem(2, Icons.chat_bubble_outline, Icons.chat_bubble, AppLocalizations.of(context)!.chat),
+                _buildNavItem(3, Icons.person_outline, Icons.person, AppLocalizations.of(context)!.navProfile),
               ],
             ),
           ),
@@ -122,21 +134,21 @@ class _MainShellPageState extends State<MainShellPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 52,
-            height: 52,
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
-              color: isActive ? _primaryGreen : _primaryGreen.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(16),
+              color: isActive ? _primaryGreen.withValues(alpha: 0.15) : Colors.transparent,
+              borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
               isActive ? Icons.grid_view : Icons.grid_view_outlined,
-              color: isActive ? Colors.white : _primaryGreen,
+              color: isActive ? _primaryGreen : _darkBlue.withValues(alpha: 0.35),
               size: 26,
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            'Catalog',
+            AppLocalizations.of(context)!.navCatalog,
             style: TextStyle(
               fontSize: 11,
               fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,

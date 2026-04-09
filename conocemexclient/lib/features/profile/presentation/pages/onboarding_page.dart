@@ -3,7 +3,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '/core/di/setup_dependencies.dart';
 import '/core/routes/app_routes.dart';
+import '/core/services/locale_service.dart';
 import '/features/profile/domain/usecases/update_profile_usecase.dart';
+import '/l10n/app_localizations.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -116,6 +118,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
           'is_preferred': true,
           'proficiency': 'native',
         });
+
+        // 3. Actualizar el idioma de la app
+        final selectedLang = _languages.firstWhere((l) => l['id'] == _selectedLanguageId);
+        final code = selectedLang['code'] as String;
+        await getIt<LocaleService>().setLocale(code);
       }
 
       if (mounted) AppRoutes.goToHome(context);
@@ -142,11 +149,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 24),
+                Padding(
+                  padding: const EdgeInsets.only(top: 24),
                   child: Text(
-                    'CONOCEMEX',
-                    style: TextStyle(
+                    AppLocalizations.of(context)!.appName,
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                       color: _darkBlue,
@@ -156,9 +163,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ),
                 const SizedBox(height: 28),
 
-                const Text(
-                  'Completa tu\nperfil',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.completeProfile,
+                  style: const TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.w900,
                     color: _darkBlue,
@@ -168,7 +175,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Necesitamos algunos datos para personalizar tu experiencia como vendedor.',
+                  AppLocalizations.of(context)!.completeProfileSubtitle,
                   style: TextStyle(
                     fontSize: 15,
                     color: _darkBlue.withValues(alpha: 0.5),
@@ -178,17 +185,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 const SizedBox(height: 32),
 
                 // ─── Nombre ───
-                _buildLabel('NOMBRE COMPLETO'),
+                _buildLabel(AppLocalizations.of(context)!.fullNameLabel),
                 _buildTextField(
                   controller: _nameController,
                   hint: 'Juan Perez',
                   validator: (v) =>
-                      (v == null || v.trim().isEmpty) ? 'Tu nombre es requerido' : null,
+                      (v == null || v.trim().isEmpty) ? AppLocalizations.of(context)!.nameRequired : null,
                 ),
                 const SizedBox(height: 20),
 
                 // ─── Telefono ───
-                _buildLabel('TELEFONO'),
+                _buildLabel(AppLocalizations.of(context)!.phoneLabel),
                 _buildTextField(
                   controller: _phoneController,
                   hint: '+52 55 1234 5678',
@@ -197,7 +204,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 const SizedBox(height: 20),
 
                 // ─── Nacionalidad ───
-                _buildLabel('NACIONALIDAD'),
+                _buildLabel(AppLocalizations.of(context)!.nationalityLabel),
                 DropdownButtonFormField<String>(
                   value: _selectedNationality,
                   decoration: _dropdownDecoration('Selecciona tu pais'),
@@ -205,12 +212,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       .map((n) => DropdownMenuItem(value: n, child: Text(n)))
                       .toList(),
                   onChanged: (v) => setState(() => _selectedNationality = v),
-                  validator: (v) => v == null ? 'Selecciona tu nacionalidad' : null,
+                  validator: (v) => v == null ? AppLocalizations.of(context)!.selectNationality : null,
                 ),
                 const SizedBox(height: 20),
 
                 // ─── Idioma (desde Supabase) ───
-                _buildLabel('IDIOMA DE PREFERENCIA'),
+                _buildLabel(AppLocalizations.of(context)!.languageLabel),
                 _loadingLanguages
                     ? Container(
                         padding: const EdgeInsets.all(18),
@@ -229,7 +236,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             ),
                             const SizedBox(width: 12),
                             Text(
-                              'Cargando idiomas...',
+                              AppLocalizations.of(context)!.loadingLanguages,
                               style: TextStyle(
                                 color: _darkBlue.withValues(alpha: 0.3),
                                 fontWeight: FontWeight.w600,
@@ -256,7 +263,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           );
                         }).toList(),
                         onChanged: (v) => setState(() => _selectedLanguageId = v),
-                        validator: (v) => v == null ? 'Selecciona un idioma' : null,
+                        validator: (v) => v == null ? AppLocalizations.of(context)!.selectLanguage : null,
                       ),
                 const SizedBox(height: 32),
 
@@ -280,27 +287,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             height: 22, width: 22,
                             child: CircularProgressIndicator(strokeWidth: 2, color: _darkBlue),
                           )
-                        : const Text(
-                            'Continuar',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                        : Text(
+                            AppLocalizations.of(context)!.continueBtn,
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
                           ),
                   ),
                 ),
 
-                const SizedBox(height: 16),
-                Center(
-                  child: TextButton(
-                    onPressed: () => AppRoutes.goToHome(context),
-                    child: Text(
-                      'Completar despues',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: _darkBlue.withValues(alpha: 0.35),
-                      ),
-                    ),
-                  ),
-                ),
                 const SizedBox(height: 32),
               ],
             ),

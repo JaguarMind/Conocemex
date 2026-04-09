@@ -10,6 +10,7 @@ class AppConstants {
   static const String splashRoute = '/';
   static const String signUpRoute = '/signup';
   static const String onboardingRoute = '/onboarding';
+  static const String editProfileRoute = '/profile/edit';
   static const String createBusinessRoute = '/business/create';
   static const String businessDetailRoute = '/business/detail';
   static const String createOfferingRoute = '/offering/create';

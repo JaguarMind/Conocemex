@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '/l10n/app_localizations.dart';
+
 class OrdersPage extends StatelessWidget {
   const OrdersPage({super.key});
 
@@ -11,9 +13,9 @@ class OrdersPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
-          'Pedidos',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.orders,
+          style: const TextStyle(
             fontWeight: FontWeight.w800,
             color: _darkBlue,
           ),
@@ -41,8 +43,8 @@ class OrdersPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              'Proximamente',
-              style: TextStyle(
+              AppLocalizations.of(context)!.comingSoon,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
                 color: _darkBlue,
@@ -50,7 +52,7 @@ class OrdersPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Aqui veras el historial\nde pedidos de tus clientes.',
+              AppLocalizations.of(context)!.ordersSubtitle,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,

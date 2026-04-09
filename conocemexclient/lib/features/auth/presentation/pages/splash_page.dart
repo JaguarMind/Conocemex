@@ -4,7 +4,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '/core/constants/app_constants.dart';
 import '/core/di/setup_dependencies.dart';
 import '/core/routes/app_routes.dart';
+import '/core/services/locale_service.dart';
 import '/features/profile/domain/usecases/get_current_profile_usecase.dart';
+import '/l10n/app_localizations.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -33,6 +35,9 @@ class _SplashPageState extends State<SplashPage> {
       AppRoutes.goToLogin(context);
       return;
     }
+
+    // Cargar idioma preferido desde Supabase
+    await getIt<LocaleService>().loadFromSupabase();
 
     // Verificar si completo el onboarding
     try {
@@ -64,9 +69,9 @@ class _SplashPageState extends State<SplashPage> {
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 24),
-            const Text(
-              'CONOCEMEX',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)?.appName ?? 'CONOCEMEX',
+              style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w900,
                 color: _darkBlue,

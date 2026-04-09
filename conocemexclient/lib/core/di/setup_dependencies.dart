@@ -4,6 +4,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '/core/config/env.dart';
 import '/core/services/biometric_service.dart';
 import '/core/services/cloudinary_service.dart';
+import '/core/services/community_chat_service.dart';
+import '/core/services/community_service.dart';
+import '/core/services/deepl_service.dart';
+import '/core/services/locale_service.dart';
+import '/core/services/mercado_pago_service.dart';
 import '/core/services/gemini_service.dart';
 import '/core/services/image_picker_service.dart';
 import '/core/services/secure_storage_service.dart';
@@ -48,6 +53,7 @@ Future<void> setupDependencies() async {
   await secureStorageService.init();
   getIt.registerSingleton<SecureStorageService>(secureStorageService);
   getIt.registerSingleton<BiometricService>(BiometricService());
+  getIt.registerSingleton<LocaleService>(LocaleService());
   getIt.registerSingleton<ImagePickerService>(ImagePickerService());
   getIt.registerSingleton<CloudinaryService>(CloudinaryService(
     cloudName: Env.cloudinaryCloudName,
@@ -58,6 +64,18 @@ Future<void> setupDependencies() async {
   }
 
   getIt.registerSingleton<SupabaseClient>(Supabase.instance.client);
+  getIt.registerSingleton<MercadoPagoService>(
+    MercadoPagoService(Supabase.instance.client),
+  );
+  getIt.registerSingleton<CommunityChatService>(
+    CommunityChatService(Supabase.instance.client),
+  );
+  getIt.registerSingleton<CommunityService>(
+    CommunityService(Supabase.instance.client),
+  );
+  if (Env.hasDeeplApiKey) {
+    getIt.registerSingleton<DeepLService>(DeepLService(Env.deeplApiKey));
+  }
 
   // ─── Auth ───
   getIt.registerSingleton<AuthRemoteDataSource>(

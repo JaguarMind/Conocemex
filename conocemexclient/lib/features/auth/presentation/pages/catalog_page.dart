@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import '/core/constants/app_constants.dart';
 import '/core/di/setup_dependencies.dart';
+import '/core/services/mercado_pago_service.dart';
 import '/features/business/domain/entities/business_entity.dart';
 import '/features/business/presentation/viewmodels/dashboard_viewmodel.dart';
 import '/features/offering/domain/entities/offering_entity.dart';
 import '/features/offering/presentation/viewmodels/offerings_viewmodel.dart';
+import '/l10n/app_localizations.dart';
 
 class CatalogPage extends StatefulWidget {
   final BusinessEntity? initialBusiness;
@@ -24,6 +26,8 @@ class CatalogPageState extends State<CatalogPage> {
   BusinessEntity? _selectedBusiness;
   late final OfferingsViewModel _offeringsVM;
   late final DashboardViewModel _dashVM;
+  bool _mpConnected = false;
+  bool _mpLoading = false;
 
   @override
   void initState() {
@@ -54,6 +58,37 @@ class CatalogPageState extends State<CatalogPage> {
   void selectBusiness(BusinessEntity business) {
     setState(() => _selectedBusiness = business);
     _offeringsVM.loadOfferings(business.id);
+    _checkMpConnection(business.id);
+  }
+
+  Future<void> _checkMpConnection(String businessId) async {
+    try {
+      final connected = await getIt<MercadoPagoService>().isConnected(businessId);
+      if (mounted) setState(() => _mpConnected = connected);
+    } catch (_) {}
+  }
+
+  Future<void> _connectMp() async {
+    if (_selectedBusiness == null) return;
+    setState(() => _mpLoading = true);
+    final l = AppLocalizations.of(context)!;
+
+    try {
+      await getIt<MercadoPagoService>().conectarMercadoPago(_selectedBusiness!.id);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l.mpOpenedBrowser), backgroundColor: Colors.green),
+        );
+      }
+    } on MpOauthException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message), backgroundColor: Colors.red),
+        );
+      }
+    }
+
+    if (mounted) setState(() => _mpLoading = false);
   }
 
   @override
@@ -61,7 +96,7 @@ class CatalogPageState extends State<CatalogPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Catalogo', style: TextStyle(fontWeight: FontWeight.w800, color: _darkBlue)),
+        title: Text(AppLocalizations.of(context)!.catalog, style: const TextStyle(fontWeight: FontWeight.w800, color: _darkBlue)),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -71,6 +106,9 @@ class CatalogPageState extends State<CatalogPage> {
         children: [
           // ─── Selector de negocio ───
           _buildBusinessSelector(),
+
+          // ─── Card Mercado Pago ───
+          if (_selectedBusiness != null) _buildMpCard(),
 
           // ─── Contenido ───
           Expanded(
@@ -109,7 +147,7 @@ class CatalogPageState extends State<CatalogPage> {
               Icon(Icons.store, size: 20, color: _darkBlue.withValues(alpha: 0.4)),
               const SizedBox(width: 10),
               Text(
-                'Selecciona un negocio',
+                AppLocalizations.of(context)!.selectBusiness,
                 style: TextStyle(
                   color: _darkBlue.withValues(alpha: 0.4),
                   fontWeight: FontWeight.w600,
@@ -174,18 +212,85 @@ class CatalogPageState extends State<CatalogPage> {
               child: const Icon(Icons.grid_view, size: 36, color: _primaryGreen),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Selecciona un negocio',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: _darkBlue),
+            Text(
+              AppLocalizations.of(context)!.selectBusiness,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: _darkBlue),
             ),
             const SizedBox(height: 8),
             Text(
-              'Elige uno de tus negocios para ver\ny gestionar sus productos y servicios.',
+              AppLocalizations.of(context)!.selectBusinessSubtitle,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 14, color: _darkBlue.withValues(alpha: 0.45), fontWeight: FontWeight.w500),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildMpCard() {
+    final l = AppLocalizations.of(context)!;
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _mpConnected ? const Color(0xFFE8F5E9) : const Color(0xFFE3F2FD),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: _mpConnected
+              ? Colors.green.withValues(alpha: 0.3)
+              : const Color(0xFF00B1EA).withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44, height: 44,
+            decoration: BoxDecoration(
+              color: _mpConnected ? Colors.green.withValues(alpha: 0.15) : const Color(0xFF00B1EA).withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              _mpConnected ? Icons.check_circle : Icons.account_balance_wallet,
+              color: _mpConnected ? Colors.green : const Color(0xFF00B1EA),
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l.mpPayments,
+                  style: const TextStyle(fontWeight: FontWeight.w800, color: _darkBlue, fontSize: 14),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  _mpConnected ? l.mpConnected : l.mpConnectSubtitle,
+                  style: TextStyle(fontSize: 12, color: _darkBlue.withValues(alpha: 0.5)),
+                ),
+              ],
+            ),
+          ),
+          if (!_mpConnected)
+            SizedBox(
+              height: 36,
+              child: ElevatedButton(
+                onPressed: _mpLoading ? null : _connectMp,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00B1EA),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                ),
+                child: _mpLoading
+                    ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                    : Text(l.connectMercadoPago),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -211,13 +316,13 @@ class CatalogPageState extends State<CatalogPage> {
                 child: const Icon(Icons.inventory_2_outlined, size: 36, color: _primaryGreen),
               ),
               const SizedBox(height: 20),
-              const Text(
-                'Sin productos aun',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: _darkBlue),
+              Text(
+                AppLocalizations.of(context)!.noProducts,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: _darkBlue),
               ),
               const SizedBox(height: 8),
               Text(
-                'Agrega productos o servicios\na ${_selectedBusiness?.name ?? "tu negocio"}.',
+                AppLocalizations.of(context)!.noProductsSubtitle(_selectedBusiness?.name ?? ''),
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 14, color: _darkBlue.withValues(alpha: 0.45)),
               ),
@@ -225,7 +330,7 @@ class CatalogPageState extends State<CatalogPage> {
               ElevatedButton.icon(
                 onPressed: () => _goToCreateOffering(),
                 icon: const Icon(Icons.add),
-                label: const Text('Agregar producto'),
+                label: Text(AppLocalizations.of(context)!.addProduct),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _primaryGreen,
                   foregroundColor: _darkBlue,
