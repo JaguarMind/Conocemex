@@ -590,4 +590,65 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get share => 'Compartilhar';
+
+  @override
+  String get charge => 'Cobrar';
+
+  @override
+  String get chargeAmount => 'VALOR A COBRAR';
+
+  @override
+  String get chargeDescription => 'DESCRICAO (OPCIONAL)';
+
+  @override
+  String get chargeDescHint => 'Ex: 2 tacos al pastor';
+
+  @override
+  String get chargeMinAmount => 'Minimo \$5 MXN';
+
+  @override
+  String get generateQr => 'Gerar QR de cobranca';
+
+  @override
+  String get generating => 'Gerando...';
+
+  @override
+  String get chargeQr => 'QR de cobranca';
+
+  @override
+  String get waitingPayment => 'Aguardando pagamento...';
+
+  @override
+  String get scanQrInstruction =>
+      'Peca ao turista para escanear o QR com a camera do celular.';
+
+  @override
+  String get paymentReceived => 'Pagamento recebido!';
+
+  @override
+  String get paymentFailed => 'O pagamento nao foi concluido';
+
+  @override
+  String get done => 'Pronto';
+
+  @override
+  String get messages => 'Mensagens';
+
+  @override
+  String get noConversations => 'Sem conversas ainda';
+
+  @override
+  String get client => 'Cliente';
+
+  @override
+  String get selectLocationMap => 'Selecione a localizacao no mapa';
+
+  @override
+  String get tapToSelectLocation => 'Toque no mapa para selecionar';
+
+  @override
+  String get confirmLocation => 'Confirmar localizacao';
+
+  @override
+  String get loadingAddress => 'Carregando endereco...';
 }

@@ -1,0 +1,527 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{multicol}
+
+\geometry{margin=2.5cm}
+
+% Colores del proyecto
+\definecolor{darkblue}{HTML}{001F3F}
+\definecolor{primarygreen}{HTML}{00DF5F}
+\definecolor{codebg}{HTML}{F3F3F4}
+\definecolor{codetext}{HTML}{2D3748}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=darkblue,
+    urlcolor=primarygreen,
+}
+
+% Estilo de codigo
+\lstset{
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\small\color{codetext},
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{gray!30},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    tabsize=2,
+}
+
+% Header/Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{darkblue}{\textbf{CONOCEMEX}}}
+\fancyhead[R]{\textcolor{gray}{Arquitectura de Software}}
+\fancyfoot[C]{\thepage}
+
+\titleformat{\section}{\Large\bfseries\color{darkblue}}{}{0em}{}
+\titleformat{\subsection}{\large\bfseries\color{darkblue!80}}{}{0em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{darkblue!60}}{}{0em}{}
+
+\begin{document}
+
+% ================================================================
+% PORTADA
+% ================================================================
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+
+{\Huge\bfseries\textcolor{darkblue}{CONOCEMEX}\par}
+\vspace{0.5cm}
+{\Large\textcolor{primarygreen}{Arquitectura de Software}\par}
+\vspace{1cm}
+{\large App M\'ovil del Microempresario (Flutter)\par}
+
+\vspace{2cm}
+
+\begin{tabular}{ll}
+\textbf{Equipo:} & JaguarMind \\
+\textbf{Evento:} & Hackathon Talent Land M\'exico 2026 \\
+\textbf{Stack:} & Flutter + Supabase + Google Cloud \\
+\textbf{Versi\'on:} & 1.0 \\
+\textbf{Fecha:} & Abril 2026 \\
+\end{tabular}
+
+\vfill
+
+{\small Documento generado autom\'aticamente a partir del c\'odigo fuente.}
+\end{titlepage}
+
+% ================================================================
+% INDICE
+% ================================================================
+\tableofcontents
+\newpage
+
+% ================================================================
+% 1. VISION GENERAL
+% ================================================================
+\section{Visi\'on General del Proyecto}
+
+CONOCEMEX es una plataforma tur\'istica que conecta \textbf{microempresarios mexicanos} con \textbf{turistas internacionales}. La aplicaci\'on m\'ovil Flutter est\'a dise\~nada para los vendedores/microempresarios, permiti\'endoles:
+
+\begin{itemize}[leftmargin=2cm]
+    \item Registrar y gestionar sus negocios
+    \item Agregar productos y servicios con fotos e IA
+    \item Recibir pagos v\'ia QR de Mercado Pago
+    \item Comunicarse con turistas en su idioma (traducci\'on autom\'atica)
+    \item Participar en comunidades tem\'aticas
+\end{itemize}
+
+\subsection{Datos T\'ecnicos}
+
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{M\'etrica} & \textbf{Valor} \\
+\midrule
+Archivos Dart & 89 \\
+M\'odulos de features & 6 (Auth, Profile, Business, Category, Offering, Chat) \\
+Servicios registrados & 14 \\
+Rutas de navegaci\'on & 9 \\
+Use Cases & 13 \\
+ViewModels & 4 \\
+Idiomas soportados & 4 (ES, EN, FR, PT) \\
+APIs externas integradas & 7 \\
+\bottomrule
+\end{tabularx}
+
+% ================================================================
+% 2. ARQUITECTURA
+% ================================================================
+\section{Arquitectura de Software}
+
+\subsection{Patr\'on: Clean Architecture}
+
+La aplicaci\'on sigue el patr\'on de \textbf{Clean Architecture} con tres capas claramente separadas:
+
+\begin{center}
+\begin{tikzpicture}[
+    layer/.style={draw=darkblue, fill=darkblue!5, rounded corners=8pt, minimum width=12cm, minimum height=1.8cm, align=center, font=\bfseries},
+    arrow/.style={->, thick, darkblue!60}
+]
+    \node[layer, fill=primarygreen!10] (pres) at (0, 4) {\textcolor{darkblue}{Capa de Presentaci\'on}\\[-2pt]\small\normalfont Pages, Widgets, ViewModels};
+    \node[layer, fill=darkblue!8] (domain) at (0, 2) {\textcolor{darkblue}{Capa de Dominio}\\[-2pt]\small\normalfont Entities, Repositories (abstract), Use Cases};
+    \node[layer, fill=codebg] (data) at (0, 0) {\textcolor{darkblue}{Capa de Datos}\\[-2pt]\small\normalfont Models, DataSources, Repository Implementations};
+
+    \draw[arrow] (pres.south) -- (domain.north) node[midway, right, font=\small] {depende de};
+    \draw[arrow] (data.north) -- (domain.south) node[midway, right, font=\small] {implementa};
+\end{tikzpicture}
+\end{center}
+
+\subsection{Gesti\'on de Estado: Provider + ChangeNotifier}
+
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{ViewModel} & \textbf{Responsabilidad} \\
+\midrule
+LoginViewModel & Autenticaci\'on (login, signup, Google, biom\'etrico, logout) \\
+DashboardViewModel & Carga de perfil, lista de negocios, actualizaci\'on de rol \\
+CreateBusinessViewModel & Creaci\'on de negocio, carga de categor\'ias \\
+OfferingsViewModel & CRUD de productos/servicios por negocio \\
+\bottomrule
+\end{tabularx}
+
+\subsection{Inyecci\'on de Dependencias: GetIt}
+
+Todos los servicios se registran como \textbf{singletons} en \texttt{setup\_dependencies.dart}. El contenedor se inicializa antes del primer frame de la UI.
+
+% ================================================================
+% 3. ESTRUCTURA DE ARCHIVOS
+% ================================================================
+\section{Estructura de Archivos}
+
+\begin{lstlisting}[language=bash, title=Estructura del proyecto]
+lib/
+|-- core/
+|   |-- config/env.dart              # Variables de entorno
+|   |-- constants/app_constants.dart # Rutas y constantes
+|   |-- di/setup_dependencies.dart   # Registro de DI
+|   |-- extensions/exceptions.dart   # Manejo de errores
+|   |-- routes/app_routes.dart       # Generador de rutas
+|   |-- services/
+|       |-- biometric_service.dart
+|       |-- cloudinary_service.dart
+|       |-- community_chat_service.dart
+|       |-- community_service.dart
+|       |-- deepl_service.dart
+|       |-- gemini_service.dart
+|       |-- image_picker_service.dart
+|       |-- locale_service.dart
+|       |-- mercado_pago_service.dart
+|       |-- mp_charge_service.dart
+|       |-- secure_storage_service.dart
+|-- features/
+|   |-- auth/        # Autenticacion y navegacion principal
+|   |-- profile/     # Gestion de perfil de usuario
+|   |-- business/    # Gestion de negocios
+|   |-- category/    # Catalogo de categorias
+|   |-- offering/    # Productos y servicios
+|-- l10n/            # Archivos de internacionalizacion
+|   |-- app_es.arb, app_en.arb, app_fr.arb, app_pt.arb
+|-- main.dart        # Punto de entrada
+\end{lstlisting}
+
+% ================================================================
+% 4. MODULOS
+% ================================================================
+\section{M\'odulos del Sistema}
+
+\subsection{M\'odulo de Autenticaci\'on}
+
+Soporta tres m\'etodos de autenticaci\'on:
+
+\begin{enumerate}
+    \item \textbf{Google Sign-In}: OAuth 2.0 con \texttt{google\_sign\_in} + \texttt{signInWithIdToken} de Supabase
+    \item \textbf{Email/Password}: \texttt{signInWithPassword} y \texttt{signUp} de Supabase Auth
+    \item \textbf{Biom\'etrico}: \texttt{local\_auth} para huella dactilar / reconocimiento facial
+\end{enumerate}
+
+\begin{center}
+\begin{tikzpicture}[
+    box/.style={draw=darkblue, fill=codebg, rounded corners=4pt, minimum width=3cm, minimum height=1cm, align=center, font=\small},
+    arrow/.style={->, thick, primarygreen!80!black}
+]
+    \node[box] (login) at (0, 0) {LoginPage};
+    \node[box] (signup) at (4, 0) {SignUpPage};
+    \node[box] (onboard) at (8, 0) {OnboardingPage};
+    \node[box] (home) at (12, 0) {MainShellPage};
+
+    \draw[arrow] (login) -- (signup) node[midway, above, font=\tiny] {Sign Up};
+    \draw[arrow] (login) -- (onboard) node[midway, below, font=\tiny] {Login OK};
+    \draw[arrow] (signup) -- (onboard) node[midway, above, font=\tiny] {Registro OK};
+    \draw[arrow] (onboard) -- (home) node[midway, above, font=\tiny] {Perfil completo};
+\end{tikzpicture}
+\end{center}
+
+\subsection{M\'odulo de Negocios}
+
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Funcionalidad} & \textbf{Descripci\'on} \\
+\midrule
+Registro de negocio & Formulario con foto (Cloudinary), IA (OpenRouter), mapa (Google Maps) \\
+Selecci\'on en mapa & Google Maps con reverse geocoding para obtener direcci\'on autom\'atica \\
+Autocompletado IA & An\'alisis de imagen del local para extraer nombre, categor\'ia, direcci\'on \\
+Gesti\'on de productos & CRUD de offerings con foto, precio, tipo, duraci\'on \\
+\bottomrule
+\end{tabularx}
+
+\subsection{M\'odulo de Pagos (Mercado Pago)}
+
+\begin{center}
+\begin{tikzpicture}[
+    box/.style={draw=darkblue, fill=codebg, rounded corners=4pt, minimum width=3.5cm, minimum height=1.2cm, align=center, font=\small},
+    arrow/.style={->, thick, darkblue!60}
+]
+    \node[box] (connect) at (0, 0) {1. Conectar MP\\(OAuth)};
+    \node[box] (charge) at (5, 0) {2. Generar cobro\\(Edge Function)};
+    \node[box] (qr) at (10, 0) {3. Mostrar QR\\(qr\_flutter)};
+    \node[box] (pay) at (5, -2.5) {4. Turista paga\\(Checkout Pro)};
+    \node[box] (done) at (10, -2.5) {5. Pago recibido\\(Realtime)};
+
+    \draw[arrow] (connect) -- (charge);
+    \draw[arrow] (charge) -- (qr);
+    \draw[arrow] (qr) -- (pay);
+    \draw[arrow] (pay) -- (done);
+\end{tikzpicture}
+\end{center}
+
+\subsection{M\'odulo de Chat}
+
+El sistema de chat tiene dos modalidades:
+
+\subsubsection{Chat Grupal (Comunidades)}
+\begin{itemize}
+    \item Crear comunidades con c\'odigo de invitaci\'on
+    \item Mensajes en tiempo real v\'ia Supabase Realtime
+    \item Traducci\'on autom\'atica al idioma del usuario (DeepL API)
+    \item Cache de traducciones en memoria
+\end{itemize}
+
+\subsubsection{Chat 1 a 1 (Turista $\leftrightarrow$ Vendedor)}
+\begin{itemize}
+    \item El turista inicia la conversaci\'on desde la ficha del negocio
+    \item El vendedor ve las conversaciones en su lista de chats
+    \item Contador de mensajes no le\'idos (badges)
+    \item Traducci\'on autom\'atica bidireccional
+\end{itemize}
+
+% ================================================================
+% 5. INTEGRACIONES EXTERNAS
+% ================================================================
+\section{Integraciones Externas}
+
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Servicio} & \textbf{Prop\'osito} & \textbf{Implementaci\'on} \\
+\midrule
+Supabase & Backend completo & Auth, PostgreSQL, Realtime, Edge Functions \\
+Google Sign-In & Autenticaci\'on OAuth & \texttt{google\_sign\_in} + Supabase \texttt{signInWithIdToken} \\
+Google Maps & Selecci\'on de ubicaci\'on & \texttt{google\_maps\_flutter} + Geocoding API \\
+Cloudinary & Almacenamiento de im\'agenes & Upload unsigned preset, transformaciones CDN \\
+OpenRouter & IA visi\'on (an\'alisis de fotos) & Gemini 2.0 Flash v\'ia API compatible OpenAI \\
+DeepL & Traducci\'on autom\'atica & API Free, cache en memoria, 4 idiomas \\
+Mercado Pago & Pagos QR & OAuth + Checkout Pro + Webhook \\
+\bottomrule
+\end{tabularx}
+
+% ================================================================
+% 6. INTERNACIONALIZACION
+% ================================================================
+\section{Internacionalizaci\'on (i18n)}
+
+\subsection{Idiomas Soportados}
+
+\begin{tabularx}{\textwidth}{llll}
+\toprule
+\textbf{C\'odigo} & \textbf{Idioma} & \textbf{Archivo ARB} & \textbf{C\'odigo DeepL} \\
+\midrule
+es & Espa\~nol & app\_es.arb & ES \\
+en & English & app\_en.arb & EN \\
+fr & Fran\c{c}ais & app\_fr.arb & FR \\
+pt & Portugu\^es & app\_pt.arb & PT-BR \\
+\bottomrule
+\end{tabularx}
+
+\subsection{Flujo de Cambio de Idioma}
+
+\begin{enumerate}
+    \item Usuario selecciona idioma en onboarding o edici\'on de perfil
+    \item Se guarda en \texttt{profile\_languages} (Supabase) con \texttt{is\_preferred = true}
+    \item \texttt{LocaleService} actualiza el locale activo y lo persiste en \texttt{SharedPreferences}
+    \item \texttt{MaterialApp} reconstruye la UI completa en el nuevo idioma (sin reiniciar)
+\end{enumerate}
+
+% ================================================================
+% 7. BASE DE DATOS
+% ================================================================
+\section{Base de Datos (Supabase / PostgreSQL)}
+
+\subsection{Tablas Principales}
+
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Tabla} & \textbf{M\'odulo} & \textbf{Descripci\'on} \\
+\midrule
+profiles & Auth/Profile & Extensi\'on de auth.users con rol, nombre, nacionalidad \\
+businesses & Business & Perfil digital del micronegocio con PostGIS \\
+categories & Category & 8 giros tur\'isticos con traducciones \\
+offerings & Offering & Productos y servicios con precio y tipo \\
+offering\_translations & Offering & Nombre/descripci\'on multiidioma \\
+communities & Chat & Grupos de chat con c\'odigo de invitaci\'on \\
+community\_members & Chat & Membres\'ia N:M con roles \\
+community\_messages & Chat & Mensajes en tiempo real \\
+conversations & Chat 1:1 & Conversaciones directas turista-vendedor \\
+direct\_messages & Chat 1:1 & Mensajes del chat directo \\
+transactions & Pagos & Cobros con estado y referencia a MP \\
+mp\_accounts & Pagos & Tokens OAuth de Mercado Pago por negocio \\
+\bottomrule
+\end{tabularx}
+
+\subsection{Algoritmo de Recomendaci\'on}
+
+La base de datos incluye dos funciones RPC para el feed del turista:
+
+\begin{itemize}
+    \item \texttt{recommend\_businesses\_discovery}: Ranking personalizado con 3 slots de equidad (reduce Gini de 0.52 a 0.33)
+    \item \texttt{recommend\_businesses\_top\_quality}: Ranking puro por calidad sin boost de equidad
+\end{itemize}
+
+% ================================================================
+% 8. SEGURIDAD
+% ================================================================
+\section{Seguridad}
+
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Mecanismo} & \textbf{Implementaci\'on} \\
+\midrule
+Autenticaci\'on & Supabase Auth con JWT, Google OAuth 2.0, biom\'etrico \\
+Autorizaci\'on & Row Level Security (RLS) en todas las tablas \\
+Tokens de pago & Cifrados en \texttt{mp\_accounts}, nunca expuestos al cliente \\
+Upload de im\'agenes & Preset unsigned de Cloudinary (solo crear, no borrar) \\
+Variables sensibles & Archivo \texttt{.env} excluido de control de versiones \\
+Almacenamiento local & \texttt{SharedPreferences} para tokens de sesi\'on \\
+\bottomrule
+\end{tabularx}
+
+% ================================================================
+% 9. DEPENDENCIAS
+% ================================================================
+\section{Dependencias del Proyecto}
+
+\subsection{Dependencias de Producci\'on}
+
+\begin{multicols}{2}
+\begin{itemize}[leftmargin=0.5cm, itemsep=1pt]
+    \item \texttt{supabase\_flutter} --- Backend
+    \item \texttt{google\_sign\_in} --- Auth Google
+    \item \texttt{local\_auth} --- Biom\'etrico
+    \item \texttt{provider} --- State management
+    \item \texttt{get\_it} --- Inyecci\'on de dependencias
+    \item \texttt{dio} --- Cliente HTTP
+    \item \texttt{google\_maps\_flutter} --- Mapas
+    \item \texttt{qr\_flutter} --- C\'odigos QR
+    \item \texttt{image\_picker} --- Selecci\'on de fotos
+    \item \texttt{url\_launcher} --- Abrir URLs
+    \item \texttt{share\_plus} --- Compartir nativo
+    \item \texttt{shared\_preferences} --- Storage local
+    \item \texttt{flutter\_dotenv} --- Variables .env
+    \item \texttt{connectivity\_plus} --- Red
+    \item \texttt{equatable} --- Igualdad de objetos
+    \item \texttt{intl} --- Internacionalizaci\'on
+    \item \texttt{flutter\_localizations} --- i18n
+\end{itemize}
+\end{multicols}
+
+% ================================================================
+% 10. FLUJO DE USUARIO
+% ================================================================
+\section{Flujo Principal del Usuario}
+
+\begin{center}
+\begin{tikzpicture}[
+    step/.style={draw=darkblue, fill=primarygreen!10, rounded corners=6pt, minimum width=4cm, minimum height=1cm, align=center, font=\small\bfseries},
+    arrow/.style={->, thick, darkblue!60},
+    note/.style={font=\tiny\itshape, text=gray}
+]
+    \node[step] (splash) at (0, 0) {Splash};
+    \node[step] (login) at (0, -1.8) {Login / SignUp};
+    \node[step] (onboard) at (0, -3.6) {Onboarding};
+    \node[step] (home) at (0, -5.4) {Mi Panel (Home)};
+
+    \node[step] (create) at (-5, -7.2) {Crear Negocio};
+    \node[step] (catalog) at (0, -7.2) {Cat\'alogo};
+    \node[step] (chat) at (5, -7.2) {Chat};
+
+    \node[step] (offering) at (-5, -9) {Agregar Producto};
+    \node[step] (cobrar) at (0, -9) {Cobrar (QR)};
+    \node[step] (community) at (5, -9) {Comunidades};
+
+    \draw[arrow] (splash) -- (login) node[midway, right, note] {sin sesi\'on};
+    \draw[arrow] (login) -- (onboard) node[midway, right, note] {auth OK};
+    \draw[arrow] (onboard) -- (home) node[midway, right, note] {perfil completo};
+    \draw[arrow] (home) -- (create);
+    \draw[arrow] (home) -- (catalog);
+    \draw[arrow] (home) -- (chat);
+    \draw[arrow] (create) -- (offering);
+    \draw[arrow] (catalog) -- (cobrar);
+    \draw[arrow] (chat) -- (community);
+\end{tikzpicture}
+\end{center}
+
+% ================================================================
+% 11. NAVEGACION
+% ================================================================
+\section{Navegaci\'on}
+
+\subsection{Bottom Navigation Bar (MainShellPage)}
+
+La aplicaci\'on utiliza un \texttt{IndexedStack} con 4 tabs:
+
+\begin{tabularx}{\textwidth}{clX}
+\toprule
+\textbf{Tab} & \textbf{Icono} & \textbf{Contenido} \\
+\midrule
+0 & Home & Dashboard de negocios (Mi Panel) \\
+1 & Grid & Cat\'alogo de productos + Pagos MP \\
+2 & Chat & Chats directos + Comunidades \\
+3 & Person & Perfil del usuario con edici\'on \\
+\bottomrule
+\end{tabularx}
+
+\subsection{Rutas Registradas}
+
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Ruta} & \textbf{P\'agina} \\
+\midrule
+\texttt{/} & SplashPage (verificaci\'on de sesi\'on) \\
+\texttt{/login} & LoginPage (Google + Email/Password) \\
+\texttt{/signup} & SignUpPage (registro de vendedor) \\
+\texttt{/onboarding} & OnboardingPage (completar perfil) \\
+\texttt{/home} & MainShellPage (4 tabs) \\
+\texttt{/profile/edit} & EditProfilePage \\
+\texttt{/business/create} & CreateBusinessPage (con mapa e IA) \\
+\texttt{/business/detail} & BusinessDetailPage \\
+\texttt{/offering/create} & CreateOfferingPage \\
+\bottomrule
+\end{tabularx}
+
+% ================================================================
+% 12. DISENO
+% ================================================================
+\section{Dise\~no Visual (Sistema Stitch)}
+
+\subsection{Paleta de Colores}
+
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Variable} & \textbf{Hex} & \textbf{Uso} \\
+\midrule
+\texttt{darkBlue} & \texttt{\#001F3F} & Textos principales, t\'itulos, iconos \\
+\texttt{primaryGreen} & \texttt{\#00DF5F} & Botones primarios, acentos, badges activos \\
+\texttt{bgGrey} & \texttt{\#F3F3F4} & Fondos de inputs, burbujas de chat ajenas \\
+\texttt{white} & \texttt{\#FFFFFF} & Fondo de pantallas y cards \\
+\bottomrule
+\end{tabularx}
+
+\subsection{Componentes UI}
+
+\begin{itemize}
+    \item \textbf{Botones primarios}: Pill shape (\texttt{borderRadius: 28}), verde con sombra
+    \item \textbf{Inputs}: Fondo gris sin borde, focus verde, labels uppercase con letter-spacing
+    \item \textbf{Cards}: Sin elevaci\'on, borde sutil (\texttt{alpha: 0.06})
+    \item \textbf{Bottom sheets}: Bordes redondeados superiores con handle visual
+    \item \textbf{Tipograf\'ia}: Weight 900 para t\'itulos, 700 para labels, 500/600 para body
+\end{itemize}
+
+% ================================================================
+% CONCLUSION
+% ================================================================
+\section{Conclusi\'on}
+
+CONOCEMEX representa una soluci\'on integral para la digitalizaci\'on de micronegocios tur\'isticos en M\'exico. La arquitectura limpia, la integraci\'on de m\'ultiples servicios en la nube, y el soporte multiidioma con traducci\'on autom\'atica permiten que vendedores de cualquier parte del pa\'is puedan ofrecer sus productos y servicios a turistas de todo el mundo, eliminando barreras de idioma y facilitando los pagos digitales.
+
+\vspace{1cm}
+
+\begin{center}
+\textcolor{darkblue}{\textbf{Equipo JaguarMind --- Talent Land M\'exico 2026}}
+\end{center}
+
+\end{document}

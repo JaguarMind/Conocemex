@@ -7,8 +7,10 @@ import '/core/di/setup_dependencies.dart';
 import '/core/services/cloudinary_service.dart';
 import '/core/services/gemini_service.dart';
 import '/core/services/image_picker_service.dart';
+import '/features/business/presentation/pages/map_picker_page.dart';
 import '/features/business/presentation/viewmodels/create_business_viewmodel.dart';
 import '/features/category/domain/entities/category_entity.dart';
+import '/l10n/app_localizations.dart';
 
 class CreateBusinessPage extends StatefulWidget {
   const CreateBusinessPage({super.key});
@@ -303,43 +305,57 @@ class _CreateBusinessPageState extends State<CreateBusinessPage> {
                     const SizedBox(height: 18),
 
                     _buildLabel('UBICACION'),
-                    _buildTextField(
-                      controller: _addressController,
-                      hint: 'Calle, Colonia, Ciudad',
-                    ),
-                    const SizedBox(height: 18),
-
-                    _buildLabel('COORDENADAS'),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildTextField(
-                            controller: _latController,
-                            hint: 'Latitud',
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                            validator: (v) {
-                              if (v == null || v.trim().isEmpty) return 'Requerido';
-                              final n = double.tryParse(v);
-                              if (n == null || n < -90 || n > 90) return 'Invalida';
-                              return null;
-                            },
-                          ),
+                    // Boton para abrir mapa
+                    GestureDetector(
+                      onTap: _openMapPicker,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: _bgGrey,
+                          borderRadius: BorderRadius.circular(12),
+                          border: _addressController.text.isEmpty
+                              ? Border.all(color: _darkBlue.withValues(alpha: 0.08))
+                              : Border.all(color: _primaryGreen.withValues(alpha: 0.3)),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildTextField(
-                            controller: _lngController,
-                            hint: 'Longitud',
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                            validator: (v) {
-                              if (v == null || v.trim().isEmpty) return 'Requerido';
-                              final n = double.tryParse(v);
-                              if (n == null || n < -180 || n > 180) return 'Invalida';
-                              return null;
-                            },
-                          ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 40, height: 40,
+                              decoration: BoxDecoration(
+                                color: _primaryGreen.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(Icons.map, color: _primaryGreen, size: 22),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (_addressController.text.isNotEmpty) ...[
+                                    Text(
+                                      _addressController.text,
+                                      style: const TextStyle(fontWeight: FontWeight.w600, color: _darkBlue, fontSize: 13),
+                                      maxLines: 2, overflow: TextOverflow.ellipsis,
+                                    ),
+                                    if (_latController.text.isNotEmpty)
+                                      Text(
+                                        '${_latController.text}, ${_lngController.text}',
+                                        style: TextStyle(fontSize: 11, color: _darkBlue.withValues(alpha: 0.35)),
+                                      ),
+                                  ] else
+                                    Text(
+                                      AppLocalizations.of(context)!.tapToSelectLocation,
+                                      style: TextStyle(fontWeight: FontWeight.w600, color: _darkBlue.withValues(alpha: 0.35), fontSize: 14),
+                                    ),
+                                ],
+                              ),
+                            ),
+                            Icon(Icons.chevron_right, color: _darkBlue.withValues(alpha: 0.3)),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                     const SizedBox(height: 32),
 
@@ -383,6 +399,28 @@ class _CreateBusinessPageState extends State<CreateBusinessPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _openMapPicker() async {
+    final lat = double.tryParse(_latController.text);
+    final lng = double.tryParse(_lngController.text);
+
+    final result = await Navigator.push<MapPickerResult>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MapPickerPage(initialLat: lat, initialLng: lng),
+      ),
+    );
+
+    if (result != null && mounted) {
+      setState(() {
+        _latController.text = result.latitude.toStringAsFixed(6);
+        _lngController.text = result.longitude.toStringAsFixed(6);
+        if (result.address != null && result.address!.isNotEmpty) {
+          _addressController.text = result.address!;
+        }
+      });
+    }
   }
 
   // ─── Zona de foto (solo upload a Cloudinary) ───
@@ -589,13 +627,26 @@ class _CreateBusinessPageState extends State<CreateBusinessPage> {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedCategoryId == null) return;
 
+    final lat = double.tryParse(_latController.text.trim());
+    final lng = double.tryParse(_lngController.text.trim());
+
+    if (lat == null || lng == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.tapToSelectLocation),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
     _viewModel.createBusiness(
       name: _nameController.text.trim(),
       categoryId: _selectedCategoryId!,
       phone: _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim(),
       address: _addressController.text.trim().isEmpty ? null : _addressController.text.trim(),
-      latitude: double.parse(_latController.text.trim()),
-      longitude: double.parse(_lngController.text.trim()),
+      latitude: lat,
+      longitude: lng,
       coverImageUrl: _uploadedImageUrl,
     );
   }

@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '/core/di/setup_dependencies.dart';
+import '/core/services/community_chat_service.dart';
 import '/core/services/community_service.dart';
 import '/features/auth/presentation/pages/chat_page.dart';
+import '/features/auth/presentation/pages/direct_chat_page.dart';
 import '/l10n/app_localizations.dart';
 
 class CommunitiesPage extends StatefulWidget {
@@ -20,20 +24,28 @@ class _CommunitiesPageState extends State<CommunitiesPage> {
   static const _bgGrey = Color(0xFFF3F3F4);
 
   late final CommunityService _service;
+  late final CommunityChatService _chatService;
   List<Map<String, dynamic>> _myCommunities = [];
+  List<Map<String, dynamic>> _conversations = [];
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
     _service = getIt<CommunityService>();
+    _chatService = getIt<CommunityChatService>();
     _loadData();
   }
 
   Future<void> _loadData() async {
     setState(() => _loading = true);
     try {
-      _myCommunities = await _service.getMyCommunities();
+      final results = await Future.wait([
+        _service.getMyCommunities(),
+        _chatService.getMyConversations(),
+      ]);
+      _myCommunities = results[0];
+      _conversations = results[1];
     } catch (e) {
       debugPrint('[Communities] Error: $e');
     }
@@ -340,31 +352,24 @@ class _CommunitiesPageState extends State<CommunitiesPage> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
                 children: [
-                  // ─── Seccion: Chats Directos (placeholder) ───
+                  // ─── Seccion: Chats Directos ───
                   _buildSectionHeader(l.directChats, Icons.chat_outlined),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: _bgGrey,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.chat_bubble_outline, size: 32, color: _darkBlue.withValues(alpha: 0.2)),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(l.comingSoon, style: TextStyle(fontWeight: FontWeight.w700, color: _darkBlue.withValues(alpha: 0.5))),
-                              const SizedBox(height: 2),
-                              Text(l.directChatsSubtitle, style: TextStyle(fontSize: 12, color: _darkBlue.withValues(alpha: 0.35))),
-                            ],
+                  if (_conversations.isEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(color: _bgGrey, borderRadius: BorderRadius.circular(14)),
+                      child: Row(
+                        children: [
+                          Icon(Icons.chat_bubble_outline, size: 28, color: _darkBlue.withValues(alpha: 0.2)),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Text(l.directChatsSubtitle, style: TextStyle(fontSize: 13, color: _darkBlue.withValues(alpha: 0.4))),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
+                        ],
+                      ),
+                    )
+                  else
+                    ..._conversations.map((c) => _buildConversationCard(c)),
                   const SizedBox(height: 24),
 
                   // ─── Seccion: Comunidades ───
@@ -387,6 +392,75 @@ class _CommunitiesPageState extends State<CommunitiesPage> {
         backgroundColor: _primaryGreen,
         foregroundColor: _darkBlue,
         child: const Icon(Icons.group_add),
+      ),
+    );
+  }
+
+  Widget _buildConversationCard(Map<String, dynamic> conv) {
+    final currentUserId = Supabase.instance.client.auth.currentUser?.id ?? '';
+    final isBuyer = conv['buyer_id'] == currentUserId;
+    final business = conv['business'] as Map<String, dynamic>?;
+    final buyer = conv['buyer'] as Map<String, dynamic>?;
+
+    final otherName = isBuyer ? (business?['name'] ?? '') : (buyer?['full_name'] ?? 'Cliente');
+    final otherAvatar = isBuyer ? (business?['cover_image_url'] as String?) : (buyer?['avatar_url'] as String?);
+    final preview = conv['last_message_preview'] as String? ?? '';
+    final unread = isBuyer ? (conv['buyer_unread'] ?? 0) : (conv['owner_unread'] ?? 0);
+
+    return Card(
+      elevation: 0,
+      margin: const EdgeInsets.only(bottom: 6),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: _darkBlue.withValues(alpha: 0.06)),
+      ),
+      color: Colors.white,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (_) => DirectChatPage(
+              conversationId: conv['id'] as String,
+              otherName: otherName as String,
+              otherAvatar: otherAvatar as String?,
+            ),
+          )).then((_) => _loadData());
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 22,
+                backgroundColor: _primaryGreen.withValues(alpha: 0.12),
+                backgroundImage: otherAvatar != null ? NetworkImage(otherAvatar as String) : null,
+                child: otherAvatar == null
+                    ? Text((otherName as String).isNotEmpty ? (otherName as String)[0].toUpperCase() : '?',
+                        style: const TextStyle(fontWeight: FontWeight.w700, color: _primaryGreen))
+                    : null,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(otherName as String, style: const TextStyle(fontWeight: FontWeight.w700, color: _darkBlue, fontSize: 14)),
+                    if (preview.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(preview, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: _darkBlue.withValues(alpha: 0.45))),
+                    ],
+                  ],
+                ),
+              ),
+              if (unread > 0)
+                Container(
+                  width: 22, height: 22,
+                  decoration: BoxDecoration(color: _primaryGreen, borderRadius: BorderRadius.circular(11)),
+                  child: Center(child: Text('$unread', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Colors.white))),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

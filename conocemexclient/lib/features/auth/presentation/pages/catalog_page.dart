@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '/core/constants/app_constants.dart';
 import '/core/di/setup_dependencies.dart';
 import '/core/services/mercado_pago_service.dart';
+import '/features/business/presentation/pages/cobrar_screen.dart';
 import '/features/business/domain/entities/business_entity.dart';
 import '/features/business/presentation/viewmodels/dashboard_viewmodel.dart';
 import '/features/offering/domain/entities/offering_entity.dart';
@@ -231,8 +232,8 @@ class CatalogPageState extends State<CatalogPage> {
   Widget _buildMpCard() {
     final l = AppLocalizations.of(context)!;
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: _mpConnected ? const Color(0xFFE8F5E9) : const Color(0xFFE3F2FD),
         borderRadius: BorderRadius.circular(14),
@@ -244,44 +245,45 @@ class CatalogPageState extends State<CatalogPage> {
       ),
       child: Row(
         children: [
-          Container(
-            width: 44, height: 44,
-            decoration: BoxDecoration(
-              color: _mpConnected ? Colors.green.withValues(alpha: 0.15) : const Color(0xFF00B1EA).withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              _mpConnected ? Icons.check_circle : Icons.account_balance_wallet,
-              color: _mpConnected ? Colors.green : const Color(0xFF00B1EA),
-              size: 24,
-            ),
+          Icon(
+            _mpConnected ? Icons.check_circle : Icons.account_balance_wallet,
+            color: _mpConnected ? Colors.green : const Color(0xFF00B1EA),
+            size: 22,
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l.mpPayments,
-                  style: const TextStyle(fontWeight: FontWeight.w800, color: _darkBlue, fontSize: 14),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  _mpConnected ? l.mpConnected : l.mpConnectSubtitle,
-                  style: TextStyle(fontSize: 12, color: _darkBlue.withValues(alpha: 0.5)),
-                ),
-              ],
+            child: Text(
+              _mpConnected ? l.mpConnected : l.mpPayments,
+              style: TextStyle(fontWeight: FontWeight.w700, color: _darkBlue, fontSize: 13),
             ),
           ),
-          if (!_mpConnected)
+          if (_mpConnected)
             SizedBox(
-              height: 36,
+              height: 34,
+              child: ElevatedButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => CobrarScreen(businessId: _selectedBusiness!.id),
+                )),
+                icon: const Icon(Icons.qr_code_2, size: 16),
+                label: Text(l.charge),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _primaryGreen,
+                  foregroundColor: _darkBlue,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                ),
+              ),
+            )
+          else
+            SizedBox(
+              height: 34,
               child: ElevatedButton(
                 onPressed: _mpLoading ? null : _connectMp,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF00B1EA),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
                 ),

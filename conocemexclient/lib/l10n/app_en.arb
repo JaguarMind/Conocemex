@@ -206,5 +206,28 @@
   "communityCreated": "Community created",
   "shareInviteCode": "Share this code so others can join:",
   "codeCopied": "Code copied",
-  "share": "Share"
+  "share": "Share",
+
+  "charge": "Charge",
+  "chargeAmount": "AMOUNT TO CHARGE",
+  "chargeDescription": "DESCRIPTION (OPTIONAL)",
+  "chargeDescHint": "E.g.: 2 tacos al pastor",
+  "chargeMinAmount": "Minimum $5 MXN",
+  "generateQr": "Generate payment QR",
+  "generating": "Generating...",
+  "chargeQr": "Payment QR",
+  "waitingPayment": "Waiting for payment...",
+  "scanQrInstruction": "Ask the tourist to scan the QR with their phone camera.",
+  "paymentReceived": "Payment received!",
+  "paymentFailed": "Payment was not completed",
+  "done": "Done",
+
+  "messages": "Messages",
+  "noConversations": "No conversations yet",
+  "client": "Customer",
+
+  "selectLocationMap": "Select the location on the map",
+  "tapToSelectLocation": "Tap the map to select a location",
+  "confirmLocation": "Confirm location",
+  "loadingAddress": "Loading address..."
 }

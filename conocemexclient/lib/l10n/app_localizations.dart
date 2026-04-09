@@ -1235,6 +1235,126 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Compartir'**
   String get share;
+
+  /// No description provided for @charge.
+  ///
+  /// In es, this message translates to:
+  /// **'Cobrar'**
+  String get charge;
+
+  /// No description provided for @chargeAmount.
+  ///
+  /// In es, this message translates to:
+  /// **'MONTO A COBRAR'**
+  String get chargeAmount;
+
+  /// No description provided for @chargeDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'DESCRIPCION (OPCIONAL)'**
+  String get chargeDescription;
+
+  /// No description provided for @chargeDescHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej: 2 tacos al pastor'**
+  String get chargeDescHint;
+
+  /// No description provided for @chargeMinAmount.
+  ///
+  /// In es, this message translates to:
+  /// **'Minimo \$5 MXN'**
+  String get chargeMinAmount;
+
+  /// No description provided for @generateQr.
+  ///
+  /// In es, this message translates to:
+  /// **'Generar QR de cobro'**
+  String get generateQr;
+
+  /// No description provided for @generating.
+  ///
+  /// In es, this message translates to:
+  /// **'Generando...'**
+  String get generating;
+
+  /// No description provided for @chargeQr.
+  ///
+  /// In es, this message translates to:
+  /// **'QR de cobro'**
+  String get chargeQr;
+
+  /// No description provided for @waitingPayment.
+  ///
+  /// In es, this message translates to:
+  /// **'Esperando pago...'**
+  String get waitingPayment;
+
+  /// No description provided for @scanQrInstruction.
+  ///
+  /// In es, this message translates to:
+  /// **'Pide al turista que escanee el QR con la camara de su celular.'**
+  String get scanQrInstruction;
+
+  /// No description provided for @paymentReceived.
+  ///
+  /// In es, this message translates to:
+  /// **'Pago recibido!'**
+  String get paymentReceived;
+
+  /// No description provided for @paymentFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'El pago no se completo'**
+  String get paymentFailed;
+
+  /// No description provided for @done.
+  ///
+  /// In es, this message translates to:
+  /// **'Listo'**
+  String get done;
+
+  /// No description provided for @messages.
+  ///
+  /// In es, this message translates to:
+  /// **'Mensajes'**
+  String get messages;
+
+  /// No description provided for @noConversations.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conversaciones aun'**
+  String get noConversations;
+
+  /// No description provided for @client.
+  ///
+  /// In es, this message translates to:
+  /// **'Cliente'**
+  String get client;
+
+  /// No description provided for @selectLocationMap.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona la ubicacion en el mapa'**
+  String get selectLocationMap;
+
+  /// No description provided for @tapToSelectLocation.
+  ///
+  /// In es, this message translates to:
+  /// **'Toca el mapa para seleccionar ubicacion'**
+  String get tapToSelectLocation;
+
+  /// No description provided for @confirmLocation.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar ubicacion'**
+  String get confirmLocation;
+
+  /// No description provided for @loadingAddress.
+  ///
+  /// In es, this message translates to:
+  /// **'Cargando direccion...'**
+  String get loadingAddress;
 }
 
 class _AppLocalizationsDelegate

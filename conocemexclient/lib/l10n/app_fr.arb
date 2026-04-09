@@ -206,5 +206,28 @@
   "communityCreated": "Communaute creee",
   "shareInviteCode": "Partagez ce code pour que d'autres puissent rejoindre:",
   "codeCopied": "Code copie",
-  "share": "Partager"
+  "share": "Partager",
+
+  "charge": "Encaisser",
+  "chargeAmount": "MONTANT A ENCAISSER",
+  "chargeDescription": "DESCRIPTION (OPTIONNEL)",
+  "chargeDescHint": "Ex: 2 tacos al pastor",
+  "chargeMinAmount": "Minimum 5 MXN",
+  "generateQr": "Generer le QR de paiement",
+  "generating": "Generation...",
+  "chargeQr": "QR de paiement",
+  "waitingPayment": "En attente du paiement...",
+  "scanQrInstruction": "Demandez au touriste de scanner le QR avec son telephone.",
+  "paymentReceived": "Paiement recu!",
+  "paymentFailed": "Le paiement n'a pas ete complete",
+  "done": "Termine",
+
+  "messages": "Messages",
+  "noConversations": "Pas de conversations",
+  "client": "Client",
+
+  "selectLocationMap": "Selectionnez l'emplacement sur la carte",
+  "tapToSelectLocation": "Appuyez sur la carte pour selectionner",
+  "confirmLocation": "Confirmer l'emplacement",
+  "loadingAddress": "Chargement de l'adresse..."
 }

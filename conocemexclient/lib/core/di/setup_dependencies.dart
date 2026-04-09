@@ -9,6 +9,7 @@ import '/core/services/community_service.dart';
 import '/core/services/deepl_service.dart';
 import '/core/services/locale_service.dart';
 import '/core/services/mercado_pago_service.dart';
+import '/core/services/mp_charge_service.dart';
 import '/core/services/gemini_service.dart';
 import '/core/services/image_picker_service.dart';
 import '/core/services/secure_storage_service.dart';
@@ -66,6 +67,9 @@ Future<void> setupDependencies() async {
   getIt.registerSingleton<SupabaseClient>(Supabase.instance.client);
   getIt.registerSingleton<MercadoPagoService>(
     MercadoPagoService(Supabase.instance.client),
+  );
+  getIt.registerSingleton<MpChargeService>(
+    MpChargeService(Supabase.instance.client),
   );
   getIt.registerSingleton<CommunityChatService>(
     CommunityChatService(Supabase.instance.client),
