@@ -29,13 +29,18 @@ export function useCommunityChat(communityId: string) {
         }),
       );
 
-      // Translate in background
+      // Translate messages from OTHER users to my language
+      const userId = user?.id;
       const translated = await Promise.all(
         enriched.map(async (msg) => {
+          // Skip my own messages
+          if (msg.sender_id === userId) return msg;
           try {
             const t = await translateText(msg.content, userLang);
+            console.log('[Chat] Translated:', msg.content, '→', t, '(to', userLang, ')');
             return { ...msg, translatedContent: t };
-          } catch {
+          } catch (err) {
+            console.warn('[Chat] Translation failed:', err);
             return msg;
           }
         }),
@@ -51,16 +56,19 @@ export function useCommunityChat(communityId: string) {
   useEffect(() => {
     const unsub = communityService.subscribeToMessages(communityId, async (newMsg) => {
       const profile = await communityService.getSenderProfile(newMsg.sender_id);
+      const isMine = newMsg.sender_id === user?.id;
       const enriched: CommunityMessage = {
         ...newMsg,
         senderName: profile?.full_name ?? 'User',
         senderAvatar: profile?.avatar_url ?? null,
-        isTranslating: true,
+        isTranslating: !isMine,
       };
 
       setMessages((prev) => [...prev, enriched]);
 
-      // Translate async
+      // Only translate messages from others
+      if (isMine) return;
+
       try {
         const translated = await translateText(newMsg.content, userLang);
         setMessages((prev) =>

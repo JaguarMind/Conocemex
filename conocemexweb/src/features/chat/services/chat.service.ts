@@ -70,7 +70,7 @@ export const chatService = {
     const supabase = authService.client;
 
     // Simple translation simulation — in production, call DeepL/OpenAI
-    const translated = await translateText(params.text, params.originalLanguage, params.targetLanguage);
+    const translated = await translateTextDeepL(params.text, params.originalLanguage, params.targetLanguage);
 
     const { data, error } = await supabase
       .from('chat_messages')
@@ -121,17 +121,9 @@ export const chatService = {
   },
 };
 
-// Simple translation using free API — replace with DeepL in production
-async function translateText(text: string, from: string, to: string): Promise<string> {
-  if (from === to) return text;
-
-  try {
-    const res = await fetch(
-      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`,
-    );
-    const data = await res.json();
-    return data.responseData?.translatedText ?? text;
-  } catch {
-    return `[${to.toUpperCase()}] ${text}`;
-  }
+// DeepL translation
+async function translateTextDeepL(text: string, _from: string, to: string): Promise<string> {
+  if (_from === to) return text;
+  const { translateText: deepl } = await import('@/core/services/translate.service');
+  return deepl(text, to);
 }

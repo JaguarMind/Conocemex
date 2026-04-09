@@ -53,31 +53,25 @@ export function ChatView({ chatId }: Props) {
               const isMine = msg.sender_id === vm.userId;
               return (
                 <div key={msg.id} className={cn('flex flex-col max-w-[80%]', isMine ? 'ml-auto items-end' : 'mr-auto items-start')}>
-                  {/* Original message */}
+                  {/* Message bubble */}
                   <div className={cn(
                     'px-4 py-3 rounded-2xl shadow-sm',
                     isMine
                       ? 'bg-primary-container text-on-primary-container rounded-br-md'
                       : 'bg-surface-container-lowest text-on-surface rounded-bl-md',
                   )}>
-                    <p className="text-sm font-medium">{msg.original_text}</p>
+                    {!isMine && msg.translated_text && msg.translated_text !== msg.original_text ? (
+                      <>
+                        <p className="text-sm font-medium">{msg.translated_text}</p>
+                        <div className="flex items-center gap-1 mt-1.5 pt-1.5 border-t border-on-surface/5">
+                          <span className="material-symbols-outlined text-[11px] text-on-surface-variant/50">translate</span>
+                          <p className="text-[11px] text-on-surface-variant/50 italic">{msg.original_text}</p>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-sm font-medium">{msg.original_text}</p>
+                    )}
                   </div>
-
-                  {/* Translated text */}
-                  {msg.translated_text && msg.translated_text !== msg.original_text && (
-                    <div className={cn(
-                      'mt-1 px-3 py-2 rounded-xl text-xs',
-                      isMine
-                        ? 'bg-primary/10 text-primary'
-                        : 'bg-surface-container-low text-on-surface-variant',
-                    )}>
-                      <div className="flex items-center gap-1 mb-0.5">
-                        <span className="material-symbols-outlined text-[12px]">translate</span>
-                        <span className="font-bold uppercase text-[10px]">{msg.target_language}</span>
-                      </div>
-                      <p>{msg.translated_text}</p>
-                    </div>
-                  )}
 
                   <span className="text-[10px] text-on-surface-variant/50 mt-1 px-1">
                     {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

@@ -60,32 +60,34 @@ export function CommunityChatView({ communityId }: Props) {
                   )}
 
                   {/* Message bubble */}
+                  {/* Message bubble */}
                   <div className={cn(
                     'px-4 py-2.5 shadow-sm',
                     isMine
                       ? 'bg-primary-container/15 text-on-surface rounded-2xl rounded-br-md'
                       : 'bg-surface-container-low text-on-surface rounded-2xl rounded-bl-md',
                   )}>
-                    <p className="text-sm">{msg.content}</p>
+                    {/* Show translation as main text for received messages */}
+                    {!isMine && msg.translatedContent && msg.translatedContent !== msg.content ? (
+                      <>
+                        <p className="text-sm">{msg.translatedContent}</p>
+                        <div className="flex items-center gap-1 mt-1.5 pt-1.5 border-t border-on-surface/5">
+                          <span className="material-symbols-outlined text-[11px] text-on-surface-variant/40">translate</span>
+                          <p className="text-[11px] text-on-surface-variant/40 italic">{msg.content}</p>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-sm">{msg.content}</p>
+                    )}
                   </div>
 
-                  {/* Translation */}
-                  {msg.isTranslating ? (
+                  {/* Translating indicator */}
+                  {msg.isTranslating && (
                     <div className="flex items-center gap-1 mt-1 px-3">
                       <div className="w-3 h-3 border border-primary-container border-t-transparent rounded-full animate-spin" />
                       <span className="text-[10px] text-on-surface-variant">Translating...</span>
                     </div>
-                  ) : msg.translatedContent && msg.translatedContent !== msg.content ? (
-                    <div className={cn(
-                      'mt-1 px-3 py-1.5 rounded-xl text-xs',
-                      isMine ? 'bg-primary/5 text-primary' : 'bg-surface-container text-on-surface-variant',
-                    )}>
-                      <div className="flex items-center gap-1 mb-0.5">
-                        <span className="material-symbols-outlined text-[10px]">translate</span>
-                      </div>
-                      <p>{msg.translatedContent}</p>
-                    </div>
-                  ) : null}
+                  )}
 
                   {/* Time */}
                   <span className="text-[10px] text-on-surface-variant/40 mt-0.5 px-1">

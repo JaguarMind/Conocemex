@@ -25,7 +25,7 @@ const EXCHANGE_API_BASE = 'https://open.er-api.com/v6/latest';
 
 export function usePaymentViewModel() {
   const [state, setState] = useState<PaymentViewState>({
-    step: 'choose-role',
+    step: 'scan-qr',
     totalMXN: 0,
     amountInput: '',
     selectedCurrency: 'USD',
