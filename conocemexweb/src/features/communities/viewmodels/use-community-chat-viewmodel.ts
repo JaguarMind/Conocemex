@@ -29,22 +29,19 @@ export function useCommunityChat(communityId: string) {
         }),
       );
 
-      // Translate messages from OTHER users to my language
+      // Translate messages from OTHER users to my language (sequential to avoid rate limit)
       const userId = user?.id;
-      const translated = await Promise.all(
-        enriched.map(async (msg) => {
-          // Skip my own messages
-          if (msg.sender_id === userId) return msg;
-          try {
-            const t = await translateText(msg.content, userLang);
-            console.log('[Chat] Translated:', msg.content, '→', t, '(to', userLang, ')');
-            return { ...msg, translatedContent: t };
-          } catch (err) {
-            console.warn('[Chat] Translation failed:', err);
-            return msg;
-          }
-        }),
-      );
+      const translated = [...enriched];
+      for (let i = 0; i < translated.length; i++) {
+        const msg = translated[i];
+        if (msg.sender_id === userId) continue;
+        try {
+          const t = await translateText(msg.content, userLang);
+          translated[i] = { ...msg, translatedContent: t };
+        } catch {
+          // Keep original on failure
+        }
+      }
 
       setMessages(translated);
       setIsLoading(false);
