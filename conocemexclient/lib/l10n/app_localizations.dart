@@ -1355,6 +1355,78 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Cargando direccion...'**
   String get loadingAddress;
+
+  /// No description provided for @registerSale.
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar Venta'**
+  String get registerSale;
+
+  /// No description provided for @items.
+  ///
+  /// In es, this message translates to:
+  /// **'articulos'**
+  String get items;
+
+  /// No description provided for @sales.
+  ///
+  /// In es, this message translates to:
+  /// **'Ventas'**
+  String get sales;
+
+  /// No description provided for @selectBusinessSales.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona un negocio para ver sus ventas'**
+  String get selectBusinessSales;
+
+  /// No description provided for @noSales.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin ventas registradas'**
+  String get noSales;
+
+  /// No description provided for @saleCompleted.
+  ///
+  /// In es, this message translates to:
+  /// **'Completada'**
+  String get saleCompleted;
+
+  /// No description provided for @salePending.
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente'**
+  String get salePending;
+
+  /// No description provided for @saleFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'Fallida'**
+  String get saleFailed;
+
+  /// No description provided for @saleRefunded.
+  ///
+  /// In es, this message translates to:
+  /// **'Reembolsada'**
+  String get saleRefunded;
+
+  /// No description provided for @disconnectMp.
+  ///
+  /// In es, this message translates to:
+  /// **'Desvincular'**
+  String get disconnectMp;
+
+  /// No description provided for @disconnectMpConfirm.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguro que quieres desvincular tu cuenta de Mercado Pago de este negocio?'**
+  String get disconnectMpConfirm;
+
+  /// No description provided for @mpDisconnected.
+  ///
+  /// In es, this message translates to:
+  /// **'Mercado Pago desvinculado'**
+  String get mpDisconnected;
 }
 
 class _AppLocalizationsDelegate

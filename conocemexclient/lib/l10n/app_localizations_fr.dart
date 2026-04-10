@@ -656,4 +656,42 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get loadingAddress => 'Chargement de l\'adresse...';
+
+  @override
+  String get registerSale => 'Enregistrer Vente';
+
+  @override
+  String get items => 'articles';
+
+  @override
+  String get sales => 'Ventes';
+
+  @override
+  String get selectBusinessSales =>
+      'Selectionnez un commerce pour voir ses ventes';
+
+  @override
+  String get noSales => 'Aucune vente enregistree';
+
+  @override
+  String get saleCompleted => 'Terminee';
+
+  @override
+  String get salePending => 'En attente';
+
+  @override
+  String get saleFailed => 'Echouee';
+
+  @override
+  String get saleRefunded => 'Remboursee';
+
+  @override
+  String get disconnectMp => 'Deconnecter';
+
+  @override
+  String get disconnectMpConfirm =>
+      'Voulez-vous vraiment deconnecter votre compte Mercado Pago de ce commerce?';
+
+  @override
+  String get mpDisconnected => 'Mercado Pago deconnecte';
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '/core/constants/app_constants.dart';
 import '/core/di/setup_dependencies.dart';
 import '/core/services/mercado_pago_service.dart';
-import '/features/business/presentation/pages/cobrar_screen.dart';
+import '/features/business/presentation/pages/registrar_venta_page.dart';
 import '/features/business/domain/entities/business_entity.dart';
 import '/features/business/presentation/viewmodels/dashboard_viewmodel.dart';
 import '/features/offering/domain/entities/offering_entity.dart';
@@ -67,6 +67,44 @@ class CatalogPageState extends State<CatalogPage> {
       final connected = await getIt<MercadoPagoService>().isConnected(businessId);
       if (mounted) setState(() => _mpConnected = connected);
     } catch (_) {}
+  }
+
+  Future<void> _disconnectMp() async {
+    if (_selectedBusiness == null) return;
+    final l = AppLocalizations.of(context)!;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l.disconnectMp),
+        content: Text(l.disconnectMpConfirm),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.cancel)),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l.disconnectMp, style: const TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      await getIt<MercadoPagoService>().disconnectMercadoPago(_selectedBusiness!.id);
+      if (mounted) {
+        setState(() => _mpConnected = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l.mpDisconnected), backgroundColor: Colors.green),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
   Future<void> _connectMp() async {
@@ -258,22 +296,40 @@ class CatalogPageState extends State<CatalogPage> {
             ),
           ),
           if (_mpConnected)
-            SizedBox(
-              height: 34,
-              child: ElevatedButton.icon(
-                onPressed: () => Navigator.push(context, MaterialPageRoute(
-                  builder: (_) => CobrarScreen(businessId: _selectedBusiness!.id),
-                )),
-                icon: const Icon(Icons.qr_code_2, size: 16),
-                label: Text(l.charge),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _primaryGreen,
-                  foregroundColor: _darkBlue,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  height: 34,
+                  child: ElevatedButton.icon(
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(
+                      builder: (_) => RegistrarVentaPage(businessId: _selectedBusiness!.id, businessName: _selectedBusiness!.name),
+                    )),
+                    icon: const Icon(Icons.point_of_sale, size: 16),
+                    label: Text(l.registerSale),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _primaryGreen,
+                      foregroundColor: _darkBlue,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      textStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 6),
+                SizedBox(
+                  height: 34, width: 34,
+                  child: IconButton(
+                    onPressed: () => _disconnectMp(),
+                    icon: Icon(Icons.link_off, size: 16, color: Colors.red.withValues(alpha: 0.6)),
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.red.withValues(alpha: 0.08),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
+                ),
+              ],
             )
           else
             SizedBox(

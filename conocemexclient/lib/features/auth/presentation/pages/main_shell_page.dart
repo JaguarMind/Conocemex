@@ -6,6 +6,7 @@ import '/features/auth/presentation/pages/catalog_page.dart';
 import '/features/auth/presentation/pages/communities_page.dart';
 import '/features/auth/presentation/pages/home_page.dart';
 import '/features/business/domain/entities/business_entity.dart';
+import '/features/business/presentation/pages/sales_history_page.dart';
 import '/features/business/presentation/viewmodels/dashboard_viewmodel.dart';
 import '/features/profile/presentation/pages/profile_page.dart';
 import '/l10n/app_localizations.dart';
@@ -62,6 +63,7 @@ class _MainShellPageState extends State<MainShellPage> {
             key: _catalogKey,
             initialBusiness: _selectedBusiness,
           ),
+          const SalesHistoryPage(),
           const CommunitiesPage(),
           const ProfilePage(),
         ],
@@ -85,8 +87,9 @@ class _MainShellPageState extends State<MainShellPage> {
               children: [
                 _buildNavItem(0, Icons.home_outlined, Icons.home, AppLocalizations.of(context)!.navHome),
                 _buildCatalogItem(),
-                _buildNavItem(2, Icons.chat_bubble_outline, Icons.chat_bubble, AppLocalizations.of(context)!.chat),
-                _buildNavItem(3, Icons.person_outline, Icons.person, AppLocalizations.of(context)!.navProfile),
+                _buildNavItem(2, Icons.receipt_long_outlined, Icons.receipt_long, AppLocalizations.of(context)!.sales),
+                _buildNavItem(3, Icons.chat_bubble_outline, Icons.chat_bubble, AppLocalizations.of(context)!.chat),
+                _buildNavItem(4, Icons.person_outline, Icons.person, AppLocalizations.of(context)!.navProfile),
               ],
             ),
           ),

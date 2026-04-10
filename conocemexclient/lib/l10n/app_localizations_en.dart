@@ -651,4 +651,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loadingAddress => 'Loading address...';
+
+  @override
+  String get registerSale => 'Register Sale';
+
+  @override
+  String get items => 'items';
+
+  @override
+  String get sales => 'Sales';
+
+  @override
+  String get selectBusinessSales => 'Select a business to view its sales';
+
+  @override
+  String get noSales => 'No sales recorded';
+
+  @override
+  String get saleCompleted => 'Completed';
+
+  @override
+  String get salePending => 'Pending';
+
+  @override
+  String get saleFailed => 'Failed';
+
+  @override
+  String get saleRefunded => 'Refunded';
+
+  @override
+  String get disconnectMp => 'Disconnect';
+
+  @override
+  String get disconnectMpConfirm =>
+      'Are you sure you want to disconnect your Mercado Pago account from this business?';
+
+  @override
+  String get mpDisconnected => 'Mercado Pago disconnected';
 }

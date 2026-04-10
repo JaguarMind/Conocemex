@@ -239,5 +239,18 @@
   "selectLocationMap": "Selecciona la ubicacion en el mapa",
   "tapToSelectLocation": "Toca el mapa para seleccionar ubicacion",
   "confirmLocation": "Confirmar ubicacion",
-  "loadingAddress": "Cargando direccion..."
+  "loadingAddress": "Cargando direccion...",
+
+  "registerSale": "Registrar Venta",
+  "items": "articulos",
+  "sales": "Ventas",
+  "selectBusinessSales": "Selecciona un negocio para ver sus ventas",
+  "noSales": "Sin ventas registradas",
+  "saleCompleted": "Completada",
+  "salePending": "Pendiente",
+  "saleFailed": "Fallida",
+  "saleRefunded": "Reembolsada",
+  "disconnectMp": "Desvincular",
+  "disconnectMpConfirm": "Seguro que quieres desvincular tu cuenta de Mercado Pago de este negocio?",
+  "mpDisconnected": "Mercado Pago desvinculado"
 }

@@ -651,4 +651,41 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get loadingAddress => 'Carregando endereco...';
+
+  @override
+  String get registerSale => 'Registrar Venda';
+
+  @override
+  String get items => 'itens';
+
+  @override
+  String get sales => 'Vendas';
+
+  @override
+  String get selectBusinessSales => 'Selecione um negocio para ver suas vendas';
+
+  @override
+  String get noSales => 'Sem vendas registradas';
+
+  @override
+  String get saleCompleted => 'Concluida';
+
+  @override
+  String get salePending => 'Pendente';
+
+  @override
+  String get saleFailed => 'Falhou';
+
+  @override
+  String get saleRefunded => 'Reembolsada';
+
+  @override
+  String get disconnectMp => 'Desconectar';
+
+  @override
+  String get disconnectMpConfirm =>
+      'Tem certeza de que deseja desconectar sua conta Mercado Pago deste negocio?';
+
+  @override
+  String get mpDisconnected => 'Mercado Pago desconectado';
 }

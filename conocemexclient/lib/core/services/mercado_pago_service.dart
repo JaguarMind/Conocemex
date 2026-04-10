@@ -73,6 +73,19 @@ class MercadoPagoService {
     return true;
   }
 
+  /// Desvincula la cuenta de MP de un negocio.
+  Future<void> disconnectMercadoPago(String businessId) async {
+    try {
+      await supabaseClient
+          .from('mp_accounts')
+          .delete()
+          .eq('business_id', businessId);
+    } catch (e) {
+      debugPrint('[MercadoPago] Disconnect error: $e');
+      throw MpOauthException('disconnect_failed', 'Error al desvincular: $e');
+    }
+  }
+
   /// Verifica si un negocio ya tiene cuenta de MP conectada.
   Future<bool> isConnected(String businessId) async {
     try {

@@ -229,5 +229,18 @@
   "selectLocationMap": "Selectionnez l'emplacement sur la carte",
   "tapToSelectLocation": "Appuyez sur la carte pour selectionner",
   "confirmLocation": "Confirmer l'emplacement",
-  "loadingAddress": "Chargement de l'adresse..."
+  "loadingAddress": "Chargement de l'adresse...",
+
+  "registerSale": "Enregistrer Vente",
+  "items": "articles",
+  "sales": "Ventes",
+  "selectBusinessSales": "Selectionnez un commerce pour voir ses ventes",
+  "noSales": "Aucune vente enregistree",
+  "saleCompleted": "Terminee",
+  "salePending": "En attente",
+  "saleFailed": "Echouee",
+  "saleRefunded": "Remboursee",
+  "disconnectMp": "Deconnecter",
+  "disconnectMpConfirm": "Voulez-vous vraiment deconnecter votre compte Mercado Pago de ce commerce?",
+  "mpDisconnected": "Mercado Pago deconnecte"
 }

@@ -229,5 +229,18 @@
   "selectLocationMap": "Select the location on the map",
   "tapToSelectLocation": "Tap the map to select a location",
   "confirmLocation": "Confirm location",
-  "loadingAddress": "Loading address..."
+  "loadingAddress": "Loading address...",
+
+  "registerSale": "Register Sale",
+  "items": "items",
+  "sales": "Sales",
+  "selectBusinessSales": "Select a business to view its sales",
+  "noSales": "No sales recorded",
+  "saleCompleted": "Completed",
+  "salePending": "Pending",
+  "saleFailed": "Failed",
+  "saleRefunded": "Refunded",
+  "disconnectMp": "Disconnect",
+  "disconnectMpConfirm": "Are you sure you want to disconnect your Mercado Pago account from this business?",
+  "mpDisconnected": "Mercado Pago disconnected"
 }
